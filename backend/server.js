@@ -24,6 +24,7 @@ const corsOptions = {
       'http://127.0.0.1:5500',      // Local development (Live Server)
       'http://localhost:3006',      // Local React/Vue development
       'http://localhost:5500',      // Alternative local port
+      'https://goldenbriedge.netlify.app',
       process.env.FRONTEND_URL      // Your production frontend URL
     ].filter(Boolean); // Remove any undefined values
     
