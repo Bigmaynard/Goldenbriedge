@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clean Test</title>
+    <style>
+        body { font-family: Arial; padding: 50px; }
+        #status { padding: 20px; background: #ffd; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Clean Test Page</h1>
+    <div id="status">Ready to test...</div>
+    <button onclick="runTest()">Run Test</button>
+
+    <script>
+        let clickCount = 0;
+        
+        function runTest() {
+            clickCount++;
+            const status = document.getElementById('status');
+            status.innerHTML = `
+                <h3>Test #${clickCount}</h3>
+                <p>Time: ${new Date().toLocaleTimeString()}</p>
+                <p>This message should stay visible</p>
+                <p>If this disappears, the page is reloading</p>
+            `;
+            status.style.backgroundColor = clickCount % 2 === 0 ? '#dfffd9' : '#ffd9d9';
+            
+            console.log(`Test button clicked ${clickCount} times at ${new Date().toLocaleTimeString()}`);
+            
+            // Return false to prevent any default behavior
+            return false;
+        }
+
+        // Log any page unload attempts
+        window.addEventListener('beforeunload', function(event) {
+            console.log('Page trying to unload at:', new Date().toLocaleTimeString());
+            // Don't prevent it - let's see what happens
+        });
+
+        console.log('Clean test page loaded at:', new Date().toLocaleTimeString());
+    </script>
+</body>
+</html>

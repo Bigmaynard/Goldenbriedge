@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - GoldenBridge Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .disclaimer {
+            background: #ff6b6b;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 60px auto 20px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bank-logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .bank-logo span {
+            color: #667eea;
+        }
+
+        .user-info {
+            text-align: right;
+             background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .welcome {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #4a5568;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #4a5568;
+        }
+
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #fed7d7;
+            color: #742a2a;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #feb2b2;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #2d3748;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .support-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #718096;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            box-shadow: 0 5px 15px rgba(203, 213, 224, 0.4);
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ticket-list {
+            margin-top: 20px;
+        }
+
+        .ticket-item {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .ticket-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ticket-subject {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .ticket-date {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .ticket-message {
+            color: #4a5568;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .ticket-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-open {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .status-in-progress {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .status-closed {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5a67d8;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .ticket-details {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            width: 120px;
+            color: #4a5568;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #2d3748;
+        }
+
+        .response-section {
+            margin-top: 20px;
+        }
+
+        .response-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .response-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid #667eea;
+        }
+
+        .response-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .response-author {
+            font-weight: bold;
+        }
+
+        .response-content {
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .admin-response {
+            border-left-color: #38a169;
+        }
+
+        .no-tickets {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .no-tickets i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #cbd5e0;
+        }
+
+        .urgent-badge {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 70px);
+                z-index: 999;
+                border-radius: 0;
+            }
+
+            .sidebar.active {
+                display: block;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .support-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                text-align: center;
+                border-bottom: 2px solid #e2e8f0;
+                border-radius: 0;
+            }
+
+            .tab-btn.active {
+                border-bottom: 3px solid #667eea;
+            }
+
+            .ticket-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .ticket-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .ticket-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-label {
+                width: 100%;
+            }
+        }
+
+        .priority-select {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .priority-option {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .priority-option:hover {
+            border-color: #667eea;
+        }
+
+        .priority-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .priority-low {
+            border-color: #c6f6d5;
+        }
+
+        .priority-low.selected {
+            background: #38a169;
+            border-color: #38a169;
+        }
+
+        .priority-medium {
+            border-color: #bee3f8;
+        }
+
+        .priority-medium.selected {
+            background: #3182ce;
+            border-color: #3182ce;
+        }
+
+        .priority-high {
+            border-color: #fed7d7;
+        }
+
+        .priority-high.selected {
+            background: #e53e3e;
+            border-color: #e53e3e;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="bank-logo"><span>Golden</span>Bridge Bank</div>
+            </div>
+           
+            <button class="nav-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+         <div class="user-info">
+                <div class="welcome">Welcome, <span id="userName">User</span>!</div>
+                <div class="balance">$<span id="accountBalance" class="currency-format">0.00</span></div>
+            </div>
+
+        <div class="main-content">
+            <div class="sidebar" id="sidebar">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="transfer.html" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i> Transfer Money
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <i class="fas fa-history"></i> Transactions
+                </a>
+                <a href="loan.html" class="nav-item">
+                    <i class="fas fa-hand-holding-usd"></i> Loans
+                </a>
+                <a href="card.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i> Debit Card
+                </a>
+                <a href="support.html" class="nav-item active">
+                    <i class="fas fa-headset"></i> Support
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user-cog"></i> Profile
+                </a>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="content-area">
+                <h2 class="section-title">Customer Support</h2>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <div class="support-tabs">
+                    <button class="tab-btn" onclick="showSupportTab('new')">New Ticket</button>
+                    <button class="tab-btn active" onclick="showSupportTab('myTickets')">My Tickets</button>
+                    <button class="tab-btn" onclick="showSupportTab('knowledge')">Knowledge Base</button>
+                </div>
+
+                <!-- New Ticket Tab -->
+                <div id="new-tab" class="tab-content">
+                    <form id="ticketForm">
+                        <div class="form-group">
+                            <label for="ticketSubject">Subject *</label>
+                            <input type="text" id="ticketSubject" placeholder="Brief description of your issue" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Priority Level</label>
+                            <div class="priority-select">
+                                <div class="priority-option priority-low" onclick="selectPriority('low')">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>Low</div>
+                                    <small>General question</small>
+                                </div>
+                                <div class="priority-option priority-medium selected" onclick="selectPriority('medium')">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <div>Medium</div>
+                                    <small>Account issue</small>
+                                </div>
+                                <div class="priority-option priority-high" onclick="selectPriority('high')">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>High</div>
+                                    <small>Urgent problem</small>
+                                </div>
+                            </div>
+                            <input type="hidden" id="ticketPriority" value="medium">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ticketCategory">Category *</label>
+                            <select id="ticketCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="account">Account Issues</option>
+                                <option value="transfer">Transfers & Payments</option>
+                                <option value="card">Debit Card</option>
+                                <option value="loan">Loans</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="security">Security Concern</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ticketMessage">Message *</label>
+                            <textarea id="ticketMessage" placeholder="Please describe your issue in detail..." rows="6" required></textarea>
+                        </div>
+
+                        <button type="button" class="btn btn-full" onclick="createSupportTicket()">
+                            <i class="fas fa-paper-plane"></i> Submit Ticket
+                        </button>
+                    </form>
+
+                    <div class="support-info">
+                        <h4>Support Information</h4>
+                        <p>Our support team typically responds within 24 hours. For urgent matters, please call our support line at <strong>1-800-GOLDEN-BRIDGE</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- My Tickets Tab -->
+                <div id="myTickets-tab" class="tab-content active">
+                    <div class="filters">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="ticketStatusFilter">Filter by Status</label>
+                            <select id="ticketStatusFilter" onchange="filterTickets()">
+                                <option value="">All Statuses</option>
+                                <option value="open">Open</option>
+                                <option value="in progress">In Progress</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-secondary" onclick="loadSupportTickets()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="ticketsList">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading your support tickets...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Base Tab -->
+                <div id="knowledge-tab" class="tab-content">
+                    <h3>Frequently Asked Questions</h3>
+                    
+                    <div class="faq-category">
+                        <h4>Account Management</h4>
+                        <div class="faq-item">
+                            <div class="faq-question">How do I update my personal information?</div>
+                            <div class="faq-answer">You can update your personal information in the Profile section of your dashboard.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">How do I change my password?</div>
+                            <div class="faq-answer">Go to Profile → Security Settings to change your password.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-category">
+                        <h4>Transfers & Payments</h4>
+                        <div class="faq-item">
+                            <div class="faq-question">How long do transfers take to process?</div>
+                            <div class="faq-answer">Local transfers are instant, while wire transfers take 1-2 business days.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Is there a limit on transfer amounts?</div>
+                            <div class="faq-answer">Yes, daily transfer limits are set for security purposes. You can view your limits in the Transfer section.</div>
+                        </div>
+                    </div>
+
+                    <div class="faq-category">
+                        <h4>Security</h4>
+                        <div class="faq-item">
+                            <div class="faq-question">What should I do if I suspect fraudulent activity?</div>
+                            <div class="faq-answer">Immediately contact support and freeze your account through the Security Settings.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">How is my data protected?</div>
+                            <div class="faq-answer">We use bank-level encryption and security protocols to protect your information.</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-info">
+                        <h4>Still Need Help?</h4>
+                        <p>If you couldn't find the answer to your question, please create a support ticket or contact us directly:</p>
+                        <ul>
+                            <li><strong>Phone:</strong> 1-800-GOLDEN-BRIDGE</li>
+                            <li><strong>Email:</strong> support@goldenbridgebank.com</li>
+                            <li><strong>Hours:</strong> 24/7 Customer Support</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Processing your request...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Details Modal -->
+    <div class="modal" id="ticketDetailModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('ticketDetailModal')">&times;</span>
+            <h3 class="modal-title">Support Ticket Details</h3>
+            
+            <div class="ticket-details" id="ticketDetailContent">
+                <!-- Ticket details will be inserted here -->
+            </div>
+
+            <div class="response-section">
+                <div class="response-header">Conversation</div>
+                <div id="ticketResponses">
+                    <!-- Responses will be inserted here -->
+                </div>
+            </div>
+
+            <div class="response-form" id="responseForm">
+                <div class="form-group">
+                    <label for="responseMessage">Add Response</label>
+                    <textarea id="responseMessage" placeholder="Type your response here..." rows="3"></textarea>
+                </div>
+                <button type="button" class="btn" onclick="addResponse()">
+                    <i class="fas fa-reply"></i> Send Response
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3006/api';
+        let currentUser = null;
+        let userTickets = [];
+        let currentTicketId = null;
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            // Set default priority selection
+            document.querySelector('.priority-option.priority-medium').classList.add('selected');
+            // Load tickets immediately since My Tickets is the default tab
+            loadSupportTickets();
+        });
+
+        // Check if user is authenticated
+        function checkAuth() {
+            const token = localStorage.getItem('bank_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Verify token is still valid
+            fetch(`${API_BASE}/auth/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    localStorage.removeItem('bank_token');
+                    window.location.href = 'login.html';
+                }
+                return response.json();
+            })
+            .then(user => {
+                currentUser = user;
+                document.getElementById('userName').textContent = user.full_name;
+                document.getElementById('accountBalance').textContent = formatCurrencyValue(user.balance);
+            })
+            .catch(error => {
+                console.error('Auth check failed:', error);
+                localStorage.removeItem('bank_token');
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Show support tab
+        function showSupportTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Activate selected tab button
+            event.target.classList.add('active');
+            
+            // Load data if needed
+            if (tabName === 'myTickets') {
+                loadSupportTickets();
+            }
+        }
+
+        // Select priority level
+        function selectPriority(level) {
+            document.getElementById('ticketPriority').value = level;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.priority-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            event.currentTarget.classList.add('selected');
+        }
+
+        // Create support ticket
+        function createSupportTicket() {
+            const subject = document.getElementById('ticketSubject').value;
+            const priority = document.getElementById('ticketPriority').value;
+            const category = document.getElementById('ticketCategory').value;
+            const message = document.getElementById('ticketMessage').value;
+            
+            if (!subject || !category || !message) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            showLoading(true);
+            hideMessages();
+
+            fetch(`${API_BASE}/transactions/support`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('bank_token')}`
+                },
+                body: JSON.stringify({
+                    subject: subject,
+                    message: `[Priority: ${priority.toUpperCase()}, Category: ${category}]\n\n${message}`,
+                    priority: priority,
+                    category: category
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showLoading(false);
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    showSuccess('Support ticket created successfully!');
+                    
+                    // Clear form
+                    document.getElementById('ticketSubject').value = '';
+                    document.getElementById('ticketMessage').value = '';
+                    document.getElementById('ticketCategory').value = '';
+                    
+                    // Reset priority to default
+                    document.querySelectorAll('.priority-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    document.querySelector('.priority-option.priority-medium').classList.add('selected');
+                    document.getElementById('ticketPriority').value = 'medium';
+                    
+                    // FORCE SWITCH TO MY TICKETS TAB AND RELOAD
+                    setTimeout(() => {
+                        // Force activate My Tickets tab
+                        document.querySelectorAll('.tab-content').forEach(tab => {
+                            tab.classList.remove('active');
+                        });
+                        document.querySelectorAll('.tab-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        document.getElementById('myTickets-tab').classList.add('active');
+                        document.querySelector('.tab-btn[onclick="showSupportTab(\'myTickets\')"]').classList.add('active');
+                        
+                        // Reload tickets
+                        loadSupportTickets();
+                    }, 500);
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                showError('Network error: ' + error.message);
+            });
+        }
+
+        // Load user support tickets
+        function loadSupportTickets() {
+            const token = localStorage.getItem('bank_token');
+            showTicketsLoading(true);
+            
+            fetch(`${API_BASE}/transactions/support`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(tickets => {
+                showTicketsLoading(false);
+                userTickets = Array.isArray(tickets) ? tickets : [];
+                displaySupportTickets(userTickets);
+            })
+            .catch(error => {
+                showTicketsLoading(false);
+                console.error('Error loading tickets:', error);
+                userTickets = [];
+                displaySupportTickets([]);
+            });
+        }
+
+        // Display support tickets
+        function displaySupportTickets(tickets) {
+            const ticketsList = document.getElementById('ticketsList');
+            
+            if (!tickets || tickets.length === 0) {
+                ticketsList.innerHTML = `
+                    <div class="no-tickets">
+                        <i class="fas fa-ticket-alt"></i>
+                        <h3>No support tickets found</h3>
+                        <p>You haven't created any support tickets yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Apply status filter
+            const statusFilter = document.getElementById('ticketStatusFilter').value;
+            const filteredTickets = statusFilter ? 
+                tickets.filter(ticket => ticket.status === statusFilter) : 
+                tickets;
+
+            if (filteredTickets.length === 0) {
+                ticketsList.innerHTML = `
+                    <div class="no-tickets">
+                        <i class="fas fa-filter"></i>
+                        <h3>No tickets match your filter</h3>
+                        <p>Try changing your status filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            
+            filteredTickets.forEach(ticket => {
+                const statusClass = ticket.status === 'open' ? 'status-open' : 
+                                  ticket.status === 'in progress' ? 'status-in-progress' : 'status-closed';
+                
+                // Extract priority from message
+                const priorityMatch = ticket.message ? ticket.message.match(/\[Priority: ([A-Z]+)/) : null;
+                const priority = priorityMatch ? priorityMatch[1] : 'MEDIUM';
+                
+                // Extract message preview
+                let messagePreview = 'No message content';
+                if (ticket.message) {
+                    const messageParts = ticket.message.split('\n\n');
+                    messagePreview = messageParts.length > 1 ? messageParts[1] : ticket.message;
+                    messagePreview = messagePreview.substring(0, 100) + (messagePreview.length > 100 ? '...' : '');
+                }
+                
+                html += `
+                    <div class="ticket-item" onclick="viewTicketDetails(${ticket.id})">
+                        <div class="ticket-header">
+                            <div class="ticket-subject">
+                                ${ticket.subject || 'No Subject'}
+                                ${priority === 'HIGH' ? '<span class="urgent-badge">URGENT</span>' : ''}
+                            </div>
+                            <div class="ticket-date">${formatDate(ticket.created_at)}</div>
+                        </div>
+                        <div class="ticket-message">
+                            ${messagePreview}
+                        </div>
+                        <div class="ticket-footer">
+                            <div class="ticket-status ${statusClass}">${(ticket.status || 'open').toUpperCase()}</div>
+                            <div class="ticket-actions">
+                                <button class="action-btn btn-view" onclick="event.stopPropagation(); viewTicketDetails(${ticket.id})">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            ticketsList.innerHTML = html;
+        }
+
+        // Filter tickets by status
+        function filterTickets() {
+            displaySupportTickets(userTickets);
+        }
+
+        // View ticket details
+        function viewTicketDetails(ticketId) {
+            const ticket = userTickets.find(t => t.id === ticketId);
+            
+            if (!ticket) {
+                showError('Ticket not found');
+                return;
+            }
+
+            displayTicketDetails(ticket);
+        }
+
+        // Display ticket details in modal
+        // Display ticket details in modal
+async function displayTicketDetails(ticket) {
+  currentTicketId = ticket.id;
+  
+  const detailsContent = document.getElementById('ticketDetailContent');
+  const responsesContent = document.getElementById('ticketResponses');
+  
+  const statusClass = ticket.status === 'open' ? 'status-open' : 
+                    ticket.status === 'in progress' ? 'status-in-progress' : 'status-closed';
+  
+  // Extract priority and category from message
+  const priorityMatch = ticket.message ? ticket.message.match(/\[Priority: ([A-Z]+)/) : null;
+  const categoryMatch = ticket.message ? ticket.message.match(/Category: ([^\]]+)/) : null;
+  
+  const priority = priorityMatch ? priorityMatch[1] : 'MEDIUM';
+  const category = categoryMatch ? categoryMatch[1] : 'General';
+  const message = ticket.message ? ticket.message.replace(/\[Priority: [A-Z]+, Category: [^\]]+\]\n\n/, '') : 'No message content';
+  
+  detailsContent.innerHTML = `
+    <div class="detail-row">
+      <div class="detail-label">Ticket ID:</div>
+      <div class="detail-value">#${ticket.id}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Subject:</div>
+      <div class="detail-value">${ticket.subject || 'No Subject'}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Status:</div>
+      <div class="detail-value"><span class="ticket-status ${statusClass}">${(ticket.status || 'open').toUpperCase()}</span></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Priority:</div>
+      <div class="detail-value">${priority}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Category:</div>
+      <div class="detail-value">${category}</div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Created:</div>
+      <div class="detail-value">${formatDateTime(ticket.created_at)}</div>
+    </div>
+  `;
+
+  // LOAD ACTUAL CONVERSATION FROM API
+  responsesContent.innerHTML = '<div class="loading">Loading conversation...</div>';
+  
+  try {
+    const token = localStorage.getItem('bank_token');
+    const response = await fetch(`${API_BASE}/support/${ticket.id}/conversation`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (!response.ok) throw new Error('Failed to load conversation');
+    
+    const messages = await response.json();
+    
+    // Display all messages
+    responsesContent.innerHTML = '';
+    if (messages.length === 0) {
+      responsesContent.innerHTML = '<p>No messages in this conversation.</p>';
+    } else {
+      messages.forEach(msg => {
+        const messageElement = `
+          <div class="response-item ${msg.sender_type === 'admin' ? 'admin-response' : ''}">
+            <div class="response-meta">
+              <span class="response-author">${msg.sender_type === 'admin' ? 'Support Team' : 'You'}</span>
+              <span class="response-date">${formatDateTime(msg.created_at)}</span>
+            </div>
+            <div class="response-content">${msg.message}</div>
+          </div>
+        `;
+        responsesContent.innerHTML += messageElement;
+      });
+    }
+  } catch (error) {
+    console.error('Error loading conversation:', error);
+    responsesContent.innerHTML = '<p>Error loading conversation.</p>';
+  }
+
+  // Show/hide response form
+  document.getElementById('responseForm').style.display = 
+    ticket.status !== 'closed' ? 'block' : 'none';
+
+  document.getElementById('ticketDetailModal').style.display = 'block';
+}
+               
+                
+        // Add response to ticket
+        function addResponse() {
+            const responseMessage = document.getElementById('responseMessage').value;
+            
+            if (!responseMessage) {
+                showError('Please enter a response message');
+                return;
+            }
+
+            if (!currentTicketId) {
+                showError('No ticket selected');
+                return;
+            }
+
+            showLoading(true);
+
+            // Send response to the server
+            fetch(`${API_BASE}/transactions/support/${currentTicketId}/response`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('bank_token')}`
+                },
+                body: JSON.stringify({
+                    message: responseMessage
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showLoading(false);
+                
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    // Add the response to the UI
+                    const responsesContent = document.getElementById('ticketResponses');
+                    
+                    responsesContent.innerHTML += `
+                        <div class="response-item">
+                            <div class="response-meta">
+                                <span class="response-author">You</span>
+                                <span class="response-date">Just now</span>
+                            </div>
+                            <div class="response-content">${responseMessage}</div>
+                        </div>
+                    `;
+
+                    // Clear response field
+                    document.getElementById('responseMessage').value = '';
+                    
+                    showSuccess('Response added successfully!');
+                    
+                    // Close modal and refresh tickets list
+                    setTimeout(() => {
+                        closeModal('ticketDetailModal');
+                        loadSupportTickets(); // This will keep us on My Tickets tab
+                    }, 1000);
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                showError('Failed to send response: ' + error.message);
+            });
+        }
+        
+        // Format currency value with commas
+        function formatCurrencyValue(value) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value || 0);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown date';
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        // Format date and time
+        function formatDateTime(dateString) {
+            if (!dateString) return 'Unknown date';
+            return new Date(dateString).toLocaleString();
+        }
+
+        // Show loading state
+        function showLoading(show) {
+            const loadingDiv = document.getElementById('loading');
+            
+            if (show) {
+                loadingDiv.style.display = 'block';
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+            } else {
+                loadingDiv.style.display = 'none';
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+        }
+
+        // Show tickets loading state
+        function showTicketsLoading(show) {
+            const ticketsList = document.getElementById('ticketsList');
+            if (show) {
+                ticketsList.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading your tickets...</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            // Auto-hide error after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            // Auto-hide success after 5 seconds
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Hide all messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('bank_token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GoldenBridge Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .disclaimer {
+            background: #ff6b6b;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+            margin-top: 40px; /* Account for fixed disclaimer */
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .bank-logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .bank-logo span {
+            color: #ffd700;
+        }
+
+        .login-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .login-form {
+            padding: 30px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            box-shadow: 0 5px 15px rgba(203, 213, 224, 0.4);
+        }
+
+        .login-links {
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .login-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .login-links a:hover {
+            color: #764ba2;
+            background: #f7fafc;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .demo-credentials {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .demo-credentials h4 {
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .credential {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .quick-login-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-login-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            min-height: 44px; /* Minimum touch target size */
+        }
+
+        .quick-admin {
+            background: #667eea;
+            color: white;
+        }
+
+        .quick-user {
+            background: #48bb78;
+            color: white;
+        }
+
+        .quick-login-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                align-items: flex-start; /* Align to top on very small screens */
+            }
+            
+            .login-container {
+                margin: 50px 10px 20px; /* More top margin for disclaimer */
+                border-radius: 15px;
+                max-width: 100%;
+            }
+            
+            .login-header {
+                padding: 20px 15px;
+            }
+            
+            .bank-logo {
+                font-size: 24px;
+            }
+            
+            .login-subtitle {
+                font-size: 14px;
+            }
+            
+            .login-form {
+                padding: 20px 15px;
+            }
+            
+            .form-group input {
+                padding: 12px;
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+            
+            .btn {
+                padding: 14px;
+                font-size: 16px; /* Prevent zoom on iOS */
+                min-height: 50px; /* Better touch target */
+            }
+
+            .quick-login-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .quick-login-btn {
+                padding: 14px;
+                font-size: 14px;
+                min-height: 44px;
+            }
+            
+            .login-links {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .login-links a {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .demo-credentials {
+                padding: 12px;
+                font-size: 11px;
+            }
+            
+            .credential {
+                flex-direction: column;
+                margin-bottom: 8px;
+            }
+            
+            .credential span:first-child {
+                font-weight: bold;
+                margin-bottom: 2px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .bank-logo {
+                font-size: 22px;
+            }
+            
+            .login-subtitle {
+                font-size: 13px;
+            }
+            
+            .login-form {
+                padding: 15px 10px;
+            }
+        }
+
+        /* Prevent zoom on iOS when focusing inputs */
+        @media (max-width: 480px) {
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                padding-top: 60px;
+            }
+            
+            .login-container {
+                margin-top: 60px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* High DPI screen adjustments */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .btn, .quick-login-btn {
+                font-weight: 600; /* Better readability on high DPI screens */
+            }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="bank-logo"><span>Golden</span>Bridge Bank</div>
+            <div class="login-subtitle">Secure Digital Banking</div>
+        </div>
+
+        <div class="login-form">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email Address or Username</label>
+                    <input 
+                        type="text" 
+                        id="email" 
+                        placeholder="Enter your email or username" 
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="Enter your password" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Signing in...</p>
+                </div>
+            </form>
+
+           
+            <div class="login-links">
+                <a href="register.html">Create an account</a>
+                <a href="#" onclick="showForgotPassword()">Forgot password?</a>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3006/api';
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('bank_token');
+            if (token) {
+                // Verify token is still valid by trying to access a protected endpoint
+                fetch(`${API_BASE}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Check if we can access admin endpoints to determine user type
+                        fetch(`${API_BASE}/admin/users`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
+                        .then(adminResponse => {
+                            if (adminResponse.ok) {
+                                window.location.href = 'admin.html';
+                            } else {
+                                window.location.href = 'dashboard.html';
+                            }
+                        })
+                        .catch(() => {
+                            window.location.href = 'dashboard.html';
+                        });
+                    } else {
+                        localStorage.removeItem('bank_token');
+                    }
+                })
+                .catch(() => {
+                    localStorage.removeItem('bank_token');
+                });
+            }
+        });
+
+        // Handle login form submission
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const emailOrUsername = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Check if input is email (contains @) or username
+            const isEmail = emailOrUsername.includes('@');
+            
+            showLoading(true);
+            hideMessages();
+
+            // Use appropriate endpoint based on input
+            const endpoint = isEmail ? '/auth/login' : '/auth/admin/login';
+            const payload = isEmail ? 
+                { email: emailOrUsername, password } : 
+                { username: emailOrUsername, password };
+
+            fetch(`${API_BASE}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showLoading(false);
+                
+                if (data.error) {
+                    showError(data.error);
+                } else if (data.token) {
+                    // Store token and redirect appropriately
+                    localStorage.setItem('bank_token', data.token);
+                    showSuccess('Login successful! Redirecting...');
+                    
+                    // Determine if user is admin by trying to access admin endpoint
+                    fetch(`${API_BASE}/admin/users`, {
+                        headers: {
+                            'Authorization': `Bearer ${data.token}`
+                        }
+                    })
+                    .then(adminResponse => {
+                        if (adminResponse.ok) {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    })
+                    .catch(() => {
+                        window.location.href = 'dashboard.html';
+                    });
+                } else {
+                    showError('Invalid response from server');
+                }
+            })
+            .catch(error => {
+                showLoading(false);
+                showError('Network error: ' + error.message);
+            });
+        }
+
+        // Quick login for testing
+        function quickLogin(role) {
+            if (role === 'admin') {
+                document.getElementById('email').value = 'admin';
+                document.getElementById('password').value = 'admin123';
+            } else {
+                document.getElementById('email').value = 'user@example.com';
+                document.getElementById('password').value = 'user123';
+            }
+            handleLogin(new Event('submit'));
+        }
+
+        // Show loading state
+        function showLoading(show) {
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+            
+            if (show) {
+                loginBtn.style.display = 'none';
+                loading.style.display = 'block';
+            } else {
+                loginBtn.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+        
+
+        // Hide all messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Forgot password placeholder
+        function showForgotPassword() {
+            showError('For your account security, please contact support to request a new password.');
+        }
+    </script>
+</body>
+</html>

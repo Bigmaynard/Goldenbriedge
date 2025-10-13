@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Money - GoldenBridge Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 0; /* Remove padding to use full width */
+            padding-bottom: 80px; /* Space for bottom actions */
+        }
+
+        .disclaimer {
+            background: #ff6b6b;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 100%; /* Full width on mobile */
+            margin: 80px auto 30px;
+            padding: 0 15px; /* Reduced padding on mobile */
+        }
+
+        .header {
+            background: white;
+            padding: 20px; /* Reduced padding on mobile */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px; /* Reduced margin on mobile */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .bank-logo {
+            font-size: 24px; /* Reduced font size on mobile */
+            font-weight: 800;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bank-logo span {
+            color: #667eea;
+        }
+
+        .user-info {
+            text-align: right;
+            margin-top: 10px; /* Added space when wrapped */
+            width: 100%; /* Full width when wrapped */
+            display: none; /* Hidden by default on mobile */
+        }
+
+        .welcome {
+            font-size: 16px; /* Reduced font size on mobile */
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        .balance {
+            font-size: 22px; /* Reduced font size on mobile */
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .account-status {
+            font-size: 12px; /* Reduced font size on mobile */
+            padding: 4px 12px; /* Reduced padding on mobile */
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column on mobile */
+            gap: 15px; /* Reduced gap on mobile */
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px; /* Reduced padding on mobile */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+            display: none; /* Hidden by default on mobile */
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
+            z-index: 999;
+            border-radius: 0;
+            overflow-y: auto; /* Allow scrolling if needed */
+        }
+
+        .sidebar.active {
+            display: block;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px; /* Reduced padding on mobile */
+            margin-bottom: 8px; /* Reduced margin on mobile */
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #4a5568;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #fed7d7;
+            color: #742a2a;
+            border: none;
+            padding: 12px; /* Reduced padding on mobile */
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px; /* Reduced margin on mobile */
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .logout-btn:hover {
+            background: #feb2b2;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px; /* Reduced padding on mobile */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            overflow: hidden; /* Prevent content overflow */
+        }
+
+        .section-title {
+            font-size: 20px; /* Reduced font size on mobile */
+            margin-bottom: 20px; /* Reduced margin on mobile */
+            color: #2d3748;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px; /* Reduced padding on mobile */
+        }
+
+        .transfer-tabs {
+            display: flex;
+            gap: 8px; /* Reduced gap on mobile */
+            margin-bottom: 20px; /* Reduced margin on mobile */
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap; /* Allow tabs to wrap on small screens */
+        }
+
+        .tab-btn {
+            padding: 10px 15px; /* Reduced padding on mobile */
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px; /* Reduced font size on mobile */
+            font-weight: bold;
+            color: #718096;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            flex: 1; /* Equal width tabs */
+            min-width: 120px; /* Minimum width for tabs */
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .transfer-type-info {
+            background: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 12px; /* Reduced padding on mobile */
+            margin-bottom: 15px; /* Reduced margin on mobile */
+            border-radius: 8px;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .info-icon {
+            color: #38b2ac;
+            margin-right: 8px; /* Reduced margin on mobile */
+        }
+
+        .form-group {
+            margin-bottom: 15px; /* Reduced margin on mobile */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px; /* Reduced margin on mobile */
+            color: #4a5568;
+            font-weight: bold;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px; /* Reduced padding on mobile */
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px; /* Reduced font size on mobile */
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .amount-input {
+            position: relative;
+        }
+
+        .amount-input::before {
+            content: '$';
+            position: absolute;
+            left: 12px; /* Adjusted position */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px; /* Reduced font size on mobile */
+            color: #4a5568;
+            font-weight: bold;
+        }
+
+        .amount-input input {
+            padding-left: 25px; /* Adjusted padding */
+        }
+
+        .btn {
+            padding: 12px 20px; /* Reduced padding on mobile */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px; /* Reduced font size on mobile */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+            gap: 8px; /* Reduced gap on mobile */
+            margin-bottom: 15px; /* Reduced margin on mobile */
+        }
+
+        .quick-amount {
+            padding: 8px; /* Reduced padding on mobile */
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .quick-amount:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 10px; /* Reduced padding on mobile */
+            border-radius: 6px;
+            margin-bottom: 15px; /* Reduced margin on mobile */
+            display: none;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px; /* Reduced padding on mobile */
+            border-radius: 15px;
+            width: 95%; /* Wider on mobile */
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 15px; /* Adjusted position */
+            top: 10px; /* Adjusted position */
+            font-size: 20px; /* Reduced size on mobile */
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .modal-title {
+            font-size: 20px; /* Reduced font size on mobile */
+            margin-bottom: 15px; /* Reduced margin on mobile */
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px; /* Reduced gap on mobile */
+            margin: 15px 0; /* Reduced margin on mobile */
+        }
+
+        .otp-input {
+            width: 40px; /* Reduced width on mobile */
+            height: 50px; /* Reduced height on mobile */
+            text-align: center;
+            font-size: 20px; /* Reduced font size on mobile */
+            font-weight: bold;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .transaction-details {
+            background: #f7fafc;
+            padding: 15px; /* Reduced padding on mobile */
+            border-radius: 8px;
+            margin: 15px 0; /* Reduced margin on mobile */
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px; /* Reduced margin on mobile */
+            padding-bottom: 8px; /* Reduced padding on mobile */
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            color: #718096;
+            font-weight: bold;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .detail-value {
+            color: #2d3748;
+            font-weight: bold;
+            font-size: 14px; /* Reduced font size on mobile */
+        }
+
+        .amount-value {
+            font-size: 16px; /* Reduced font size on mobile */
+            color: #2d3748;
+        }
+
+        /* Bottom Quick Actions */
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px 15px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            z-index: 999;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .action-btn:hover {
+            background: #f7fafc;
+        }
+
+        .action-btn i {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+
+        .action-btn span {
+            font-size: 12px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .action-btn.active {
+            background: #667eea;
+        }
+
+        .action-btn.active i,
+        .action-btn.active span {
+            color: white;
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .bank-logo {
+                font-size: 20px;
+            }
+            
+            .content-area {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+            }
+            
+            .transfer-tabs {
+                gap: 5px;
+            }
+            
+            .tab-btn {
+                padding: 8px 10px;
+                font-size: 12px;
+                min-width: 100px;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .quick-amounts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .otp-container {
+                gap: 5px;
+            }
+            
+            .otp-input {
+                width: 35px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .bottom-actions {
+                padding: 8px 10px;
+            }
+            
+            .action-btn {
+                min-width: 50px;
+                padding: 6px;
+            }
+            
+            .action-btn i {
+                font-size: 18px;
+            }
+            
+            .action-btn span {
+                font-size: 10px;
+            }
+        }
+
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                padding: 0 20px;
+            }
+            
+            .header {
+                padding: 25px 30px;
+                margin-bottom: 30px;
+                flex-wrap: nowrap; /* Prevent wrapping */
+            }
+            
+            .user-info {
+                display: block; /* Show user info */
+                width: auto; /* Auto width */
+                margin-top: 0; /* Remove top margin */
+            }
+            
+            .bank-logo {
+                font-size: 32px;
+            }
+            
+            .welcome {
+                font-size: 18px;
+            }
+            
+            .balance {
+                font-size: 28px;
+            }
+            
+            .account-status {
+                font-size: 14px;
+                padding: 6px 16px;
+            }
+            
+            .main-content {
+                grid-template-columns: 250px 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                display: block; /* Show sidebar */
+                position: static;
+                width: 100%;
+                height: auto;
+                border-radius: 15px;
+            }
+            
+            .content-area {
+                padding: 30px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+            
+            .transfer-tabs {
+                gap: 10px;
+                margin-bottom: 25px;
+                flex-wrap: nowrap; /* Prevent wrapping */
+            }
+            
+            .tab-btn {
+                padding: 12px 25px;
+                font-size: 16px;
+                min-width: auto; /* Auto width */
+                flex: none; /* Don't stretch */
+            }
+            
+            .quick-amounts {
+                grid-template-columns: repeat(4, 1fr); /* 4 columns on larger screens */
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .bottom-actions {
+                display: none; /* Hide bottom actions on larger screens */
+            }
+        }
+
+        .currency-format {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="bank-logo"><span>Golden</span>Bridge Bank</div>
+            </div>
+            <div class="user-info">
+                <div class="welcome">Welcome, <span id="userName">User</span>!</div>
+                <div class="balance">$<span id="accountBalance" class="currency-format">0.00</span></div>
+                <div class="account-status status-active" id="accountStatus">Active</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="transfer.html" class="nav-item active">
+                    <i class="fas fa-exchange-alt"></i> Transfer Money
+                </a>
+                <a href="transactions.html" class="nav-item">
+                    <i class="fas fa-history"></i> Transactions
+                </a>
+                <a href="loan.html" class="nav-item">
+                    <i class="fas fa-hand-holding-usd"></i> Loans
+                </a>
+                <a href="card.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i> Debit Card
+                </a>
+                <a href="support.html" class="nav-item">
+                    <i class="fas fa-headset"></i> Support
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user-cog"></i> Profile
+                </a>
+                <button class="logout-btn" onclick="showLogoutModal()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="content-area">
+                <h2 class="section-title">Transfer Money</h2>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <div class="transfer-tabs">
+                    <button class="tab-btn active" onclick="showTransferTab('local')">Local Transfer</button>
+                    <button class="tab-btn" onclick="showTransferTab('wire')">Wire Transfer</button>
+                    <button class="tab-btn" onclick="showTransferTab('withdrawal')">Withdrawal</button>
+                    <button class="tab-btn" onclick="showTransferTab('deposit')">Deposit</button>
+                </div>
+
+                <!-- Local Transfer Tab -->
+                <div id="local-tab" class="tab-content active">
+                    <div class="transfer-type-info">
+                        <i class="fas fa-info-circle info-icon"></i>
+                        Transfer money to other GoldenBridge Bank accounts instantly.
+                    </div>
+
+                    <form id="localTransferForm">
+                        <div class="form-group">
+                            <label for="localRecipient">Recipient Account Number</label>
+                            <input type="text" id="localRecipient" placeholder="Enter account number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="localRecipientName">Recipient Name</label>
+                            <input type="text" id="localRecipientName" placeholder="Enter recipient name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="localAmount">Amount</label>
+                            <div class="amount-input">
+                                <input type="text" id="localAmount" placeholder="0.00" required oninput="formatCurrency(this)">
+                            </div>
+                        </div>
+
+                        <div class="quick-amounts">
+                            <div class="quick-amount" onclick="setAmount(10)">$10</div>
+                            <div class="quick-amount" onclick="setAmount(50)">$50</div>
+                            <div class="quick-amount" onclick="setAmount(100)">$100</div>
+                            <div class="quick-amount" onclick="setAmount(500)">$500</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="localDescription">Description (Optional)</label>
+                            <textarea id="localDescription" placeholder="Add a description for this transfer" rows="3"></textarea>
+                        </div>
+
+                        <button type="button" class="btn" onclick="initiateTransfer('local')">
+                            <i class="fas fa-paper-plane"></i> Send Money
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Wire Transfer Tab -->
+                <div id="wire-tab" class="tab-content">
+                    <div class="transfer-type-info">
+                        <i class="fas fa-info-circle info-icon"></i>
+                        Transfer money to other banks. May take 1-2 business days.
+                    </div>
+
+                    <form id="wireTransferForm">
+                        <div class="form-group">
+                            <label for="wireBankName">Bank Name</label>
+                            <input type="text" id="wireBankName" placeholder="Enter bank name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wireRecipient">Recipient Account Number</label>
+                            <input type="text" id="wireRecipient" placeholder="Enter account number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wireRecipientName">Recipient Name</label>
+                            <input type="text" id="wireRecipientName" placeholder="Enter recipient name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wireRouting">Routing Number</label>
+                            <input type="text" id="wireRouting" placeholder="Enter routing number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wireAmount">Amount</label>
+                            <div class="amount-input">
+                                <input type="text" id="wireAmount" placeholder="0.00" required oninput="formatCurrency(this)">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wireDescription">Description (Optional)</label>
+                            <textarea id="wireDescription" placeholder="Add a description for this transfer" rows="3"></textarea>
+                        </div>
+
+                        <button type="button" class="btn" onclick="initiateTransfer('wire')">
+                            <i class="fas fa-paper-plane"></i> Send Wire Transfer
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Withdrawal Tab -->
+                <div id="withdrawal-tab" class="tab-content">
+                    <div class="transfer-type-info">
+                        <i class="fas fa-info-circle info-icon"></i>
+                        Withdraw money from your account.
+                    </div>
+
+                    <form id="withdrawalForm">
+                        <div class="form-group">
+                            <label for="withdrawalAmount">Amount</label>
+                            <div class="amount-input">
+                                <input type="text" id="withdrawalAmount" placeholder="0.00" required oninput="formatCurrency(this)">
+                            </div>
+                        </div>
+
+                        <div class="quick-amounts">
+                            <div class="quick-amount" onclick="setWithdrawalAmount(20)">$20</div>
+                            <div class="quick-amount" onclick="setWithdrawalAmount(50)">$50</div>
+                            <div class="quick-amount" onclick="setWithdrawalAmount(100)">$100</div>
+                            <div class="quick-amount" onclick="setWithdrawalAmount(200)">$200</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="withdrawalMethod">Withdrawal Method</label>
+                            <select id="withdrawalMethod" required>
+                                <option value="">Select method</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="cash">Cash</option>
+                                <option value="check">Check</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="withdrawalDescription">Description (Optional)</label>
+                            <textarea id="withdrawalDescription" placeholder="Add a description for this withdrawal" rows="3"></textarea>
+                        </div>
+
+                        <button type="button" class="btn" onclick="initiateTransfer('withdrawal')">
+                            <i class="fas fa-money-bill-wave"></i> Process Withdrawal
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Deposit Tab -->
+                <div id="deposit-tab" class="tab-content">
+                    <div class="transfer-type-info">
+                        <i class="fas fa-info-circle info-icon"></i>
+                        Deposit money into your account.
+                    </div>
+
+                    <form id="depositForm">
+                        <div class="form-group">
+                            <label for="depositAmount">Amount</label>
+                            <div class="amount-input">
+                                <input type="text" id="depositAmount" placeholder="0.00" required oninput="formatCurrency(this)">
+                            </div>
+                        </div>
+
+                        <div class="quick-amounts">
+                            <div class="quick-amount" onclick="setDepositAmount(100)">$100</div>
+                            <div class="quick-amount" onclick="setDepositAmount(500)">$500</div>
+                            <div class="quick-amount" onclick="setDepositAmount(1000)">$1,000</div>
+                            <div class="quick-amount" onclick="setDepositAmount(5000)">$5,000</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="depositMethod">Deposit Method</label>
+                            <select id="depositMethod" required>
+                                <option value="">Select method</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="cash">Cash Deposit</option>
+                                <option value="check">Check Deposit</option>
+                                <option value="mobile">Mobile Deposit</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="depositDescription">Description (Optional)</label>
+                            <textarea id="depositDescription" placeholder="Add a description for this deposit" rows="3"></textarea>
+                        </div>
+
+                        <button type="button" class="btn" onclick="initiateTransfer('deposit')">
+                            <i class="fas fa-plus-circle"></i> Process Deposit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Quick Actions (Mobile Only) -->
+    <div class="bottom-actions">
+        <button class="action-btn" onclick="window.location.href='dashboard.html'">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="action-btn active" onclick="window.location.href='transfer.html'">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transfer</span>
+        </button>
+        <button class="action-btn" onclick="window.location.href='transactions.html'">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+        </button>
+        <button class="action-btn" onclick="window.location.href='card.html'">
+            <i class="fas fa-credit-card"></i>
+            <span>Card</span>
+        </button>
+        <button class="action-btn" onclick="window.location.href='profile.html'">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </button>
+    </div>
+
+    <!-- OTP Modal -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('otpModal')">&times;</span>
+            <h3 class="modal-title">Verify Transaction</h3>
+            
+            <div class="transaction-details" id="transactionDetails">
+                <!-- Transaction details will be inserted here -->
+            </div>
+
+            <p>Enter your six(6) digit COT code :</p>
+            
+            <div class="otp-container">
+                <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)">
+                <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)">
+                <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)">
+                <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)">
+                <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)">
+                <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 6)">
+            </div>
+
+            <div class="error-message" id="otpErrorMessage"></div>
+
+            <button type="button" class="btn" onclick="verifyOTP()">
+                <i class="fas fa-check-circle"></i> Verify & Complete
+            </button>
+            
+            <button type="button" class="btn" onclick="closeModal('otpModal')" style="background: #e2e8f0; color: #4a5568; margin-top: 10px;">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('logoutModal')">&times;</span>
+            <h3 class="modal-title">Confirm Logout</h3>
+            
+            <p style="text-align: center; margin: 20px 0;">Are you sure you want to logout from your GoldenBridge Bank account?</p>
+            
+            <div style="display: flex; gap: 15px;">
+                <button type="button" class="btn" onclick="closeModal('logoutModal')" style="background: #e2e8f0; color: #4a5568;">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn" onclick="performLogout()" style="background: #fed7d7; color: #742a2a;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3006/api';
+        let currentUser = null;
+        let allTransactions = [];
+        let currentPage = 1;
+        const transactionsPerPage = 10;
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            initializeOTPInputs();
+        });
+
+        // Check if user is authenticated
+        function checkAuth() {
+            const token = localStorage.getItem('bank_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Verify token is still valid
+            fetch(`${API_BASE}/auth/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    localStorage.removeItem('bank_token');
+                    window.location.href = 'login.html';
+                }
+                return response.json();
+            })
+            .then(user => {
+                currentUser = user;
+                document.getElementById('userName').textContent = user.full_name;
+                document.getElementById('accountBalance').textContent = formatCurrencyValue(user.balance);
+            })
+            .catch(error => {
+                console.error('Auth check failed:', error);
+                localStorage.removeItem('bank_token');
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Show transfer tab
+        function showTransferTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Activate selected tab button
+            document.querySelector(`.tab-btn[onclick="showTransferTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Initiate transfer - show OTP modal directly
+        function initiateTransfer(type) {
+            // Validate form
+            if (!validateForm(type)) {
+                showError('Please fill in all required fields correctly.');
+                return;
+            }
+            
+            hideError();
+            
+            // Update transaction details based on type
+            updateTransactionDetails(type);
+            
+            // Show OTP modal
+            showOTPModal();
+        }
+
+        // Validate form
+        function validateForm(type) {
+            let isValid = true;
+            
+            switch(type) {
+                case 'local':
+                    if (!document.getElementById('localRecipient').value || 
+                        !document.getElementById('localRecipientName').value || 
+                        !document.getElementById('localAmount').value) {
+                        isValid = false;
+                    }
+                    break;
+                
+                case 'wire':
+                    if (!document.getElementById('wireBankName').value || 
+                        !document.getElementById('wireRecipient').value || 
+                        !document.getElementById('wireRecipientName').value || 
+                        !document.getElementById('wireRouting').value || 
+                        !document.getElementById('wireAmount').value) {
+                        isValid = false;
+                    }
+                    break;
+                
+                case 'withdrawal':
+                    if (!document.getElementById('withdrawalAmount').value || 
+                        !document.getElementById('withdrawalMethod').value) {
+                        isValid = false;
+                    }
+                    break;
+                
+                case 'deposit':
+                    if (!document.getElementById('depositAmount').value || 
+                        !document.getElementById('depositMethod').value) {
+                        isValid = false;
+                    }
+                    break;
+            }
+            
+            return isValid;
+        }
+
+        // Update transaction details in modal
+        function updateTransactionDetails(type) {
+            const detailsDiv = document.getElementById('transactionDetails');
+            let html = '';
+            
+            switch(type) {
+                case 'local':
+                    html = `
+                        <div class="detail-item">
+                            <span class="detail-label">Transaction Type:</span>
+                            <span class="detail-value">Local Transfer</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">To:</span>
+                            <span class="detail-value">${document.getElementById('localRecipientName').value}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Account:</span>
+                            <span class="detail-value">${document.getElementById('localRecipient').value}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value amount-value">$${document.getElementById('localAmount').value}</span>
+                        </div>
+                    `;
+                    break;
+                
+                case 'wire':
+                    html = `
+                        <div class="detail-item">
+                            <span class="detail-label">Transaction Type:</span>
+                            <span class="detail-value">Wire Transfer</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">To:</span>
+                            <span class="detail-value">${document.getElementById('wireRecipientName').value}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Bank:</span>
+                            <span class="detail-value">${document.getElementById('wireBankName').value}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value amount-value">$${document.getElementById('wireAmount').value}</span>
+                        </div>
+                    `;
+                    break;
+                
+                case 'withdrawal':
+                    html = `
+                        <div class="detail-item">
+                            <span class="detail-label">Transaction Type:</span>
+                            <span class="detail-value">Withdrawal</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Method:</span>
+                            <span class="detail-value">${document.getElementById('withdrawalMethod').value}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value amount-value">$${document.getElementById('withdrawalAmount').value}</span>
+                        </div>
+                    `;
+                    break;
+                
+                case 'deposit':
+                    html = `
+                        <div class="detail-item">
+                            <span class="detail-label">Transaction Type:</span>
+                            <span class="detail-value">Deposit</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Method:</span>
+                            <span class="detail-value">${document.getElementById('depositMethod').value}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Amount:</span>
+                            <span class="detail-value amount-value">$${document.getElementById('depositAmount').value}</span>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            detailsDiv.innerHTML = html;
+        }
+
+        // Verify OTP - ALWAYS FAILS
+        function verifyOTP() {
+            const otp = getOTPFromInputs();
+            
+            if (!otp || otp.length !== 6) {
+                showOTPError('Please enter a complete 6-digit COT code.');
+                return;
+            }
+
+            // ALWAYS SHOW ERROR - NO SUCCESSFUL TRANSFERS
+            showOTPError('The code you input is incorrect. Please contact support to get a valid COT code.');
+        }
+
+        // Format currency input
+        function formatCurrency(input) {
+            let value = input.value.replace(/[^\d.]/g, '');
+            
+            const decimalCount = value.split('.').length - 1;
+            if (decimalCount > 1) {
+                value = value.substring(0, value.lastIndexOf('.'));
+            }
+            
+            if (value.includes('.')) {
+                const parts = value.split('.');
+                if (parts[1].length > 2) {
+                    value = parts[0] + '.' + parts[1].substring(0, 2);
+                }
+            }
+            
+            if (value) {
+                const num = parseFloat(value);
+                input.value = formatCurrencyValue(num);
+            } else {
+                input.value = '';
+            }
+        }
+
+        // Format currency value with commas
+        function formatCurrencyValue(value) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        // Set amount functions
+        function setAmount(amount) {
+            document.getElementById('localAmount').value = formatCurrencyValue(amount);
+        }
+
+        function setWithdrawalAmount(amount) {
+            document.getElementById('withdrawalAmount').value = formatCurrencyValue(amount);
+        }
+
+        function setDepositAmount(amount) {
+            document.getElementById('depositAmount').value = formatCurrencyValue(amount);
+        }
+
+        // OTP functions
+        function initializeOTPInputs() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            if (otpInputs.length > 0) {
+                otpInputs[0].focus();
+            }
+        }
+
+        function moveToNext(input, nextIndex) {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            if (input.value.length === 1 && nextIndex < otpInputs.length) {
+                otpInputs[nextIndex].focus();
+            }
+            hideOTPError();
+        }
+
+        function getOTPFromInputs() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            let otp = '';
+            otpInputs.forEach(input => {
+                otp += input.value;
+            });
+            return otp;
+        }
+
+        function showOTPModal() {
+            document.querySelectorAll('.otp-input').forEach(input => {
+                input.value = '';
+            });
+            hideOTPError();
+            document.getElementById('otpModal').style.display = 'block';
+            
+            const firstOtpInput = document.querySelector('.otp-input');
+            if (firstOtpInput) {
+                firstOtpInput.focus();
+            }
+        }
+
+        function showOTPError(message) {
+            const errorDiv = document.getElementById('otpErrorMessage');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function hideOTPError() {
+            const errorDiv = document.getElementById('otpErrorMessage');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function showLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'block';
+        }
+
+        function performLogout() {
+            // Simple logout without browser messages
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

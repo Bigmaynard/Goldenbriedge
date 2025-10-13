@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - GoldenBridge Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        .disclaimer {
+            background: #ff6b6b;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 100%; /* Changed from 1200px to 100% */
+            margin: 60px auto 20px;
+            padding: 10px; /* Reduced padding on mobile */
+            width: 100%;
+        }
+
+        .header {
+            background: white;
+            padding: 15px; /* Reduced padding */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 15px; /* Reduced margin */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .bank-logo {
+            font-size: 24px; /* Reduced font size */
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .bank-logo span {
+            color: #667eea;
+        }
+
+        .user-info {
+            text-align: right;
+            margin-top: 10px; /* Added spacing when wrapped */
+            width: 100%; /* Full width when wrapped */
+            display: none; /* Hidden by default on mobile */
+        }
+
+        .welcome {
+            font-size: 16px; /* Reduced font size */
+            margin-bottom: 5px;
+        }
+
+        .balance {
+            font-size: 20px; /* Reduced font size */
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .nav-toggle {
+            display: block; /* Always show on mobile */
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #4a5568;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column on mobile */
+            gap: 15px; /* Reduced gap */
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px; /* Reduced padding */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+            display: none; /* Hidden by default on mobile */
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 70px);
+            z-index: 999;
+            border-radius: 0;
+            overflow-y: auto; /* Allow scrolling if needed */
+        }
+
+        .sidebar.active {
+            display: block;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px; /* Reduced padding */
+            margin-bottom: 8px; /* Reduced margin */
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #4a5568;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #fed7d7;
+            color: #742a2a;
+            border: none;
+            padding: 12px; /* Reduced padding */
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px; /* Reduced margin */
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .logout-btn:hover {
+            background: #feb2b2;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px; /* Reduced padding */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            overflow: hidden; /* Prevent content overflow */
+        }
+
+        .section-title {
+            font-size: 20px; /* Reduced font size */
+            margin-bottom: 20px; /* Reduced margin */
+            color: #2d3748;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px; /* Reduced padding */
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px; /* Reduced gap */
+            margin-bottom: 20px; /* Reduced margin */
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px; /* Reduced min-width */
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px; /* Reduced margin */
+            color: #4a5568;
+            font-weight: bold;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px; /* Reduced padding */
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 10px; /* Adjusted position */
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .search-box input {
+            padding-left: 30px; /* Adjusted padding */
+        }
+
+        .btn {
+            padding: 10px 15px; /* Reduced padding */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px; /* Reduced font size */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            box-shadow: 0 5px 15px rgba(203, 213, 224, 0.4);
+        }
+
+        /* Mobile-optimized table */
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px; /* Reduced margin */
+            font-size: 14px; /* Reduced font size */
+            table-layout: fixed; /* Prevent table from expanding beyond container */
+        }
+
+        .transactions-table th,
+        .transactions-table td {
+            padding: 10px; /* Reduced padding */
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            word-wrap: break-word; /* Allow text to wrap */
+            overflow: hidden; /* Hide overflow */
+        }
+
+        .transactions-table th {
+            background: #f7fafc;
+            font-weight: bold;
+            color: #4a5568;
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            font-size: 12px; /* Smaller font for headers */
+        }
+
+        .transactions-table th:hover {
+            background: #edf2f7;
+        }
+
+        .transactions-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .status-badge {
+            padding: 4px 8px; /* Reduced padding */
+            border-radius: 20px;
+            font-size: 11px; /* Reduced font size */
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .status-approved {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-rejected {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .amount-positive {
+            color: #38a169;
+            font-weight: bold;
+        }
+
+        .amount-negative {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .currency-format {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px; /* Reduced gap */
+            flex-direction: column; /* Stack buttons vertically */
+        }
+
+        .action-btn {
+            padding: 5px 8px; /* Reduced padding */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px; /* Reduced font size */
+            transition: all 0.3s ease;
+            width: 100%; /* Full width buttons */
+            text-align: center;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5a67d8;
+        }
+
+        .btn-receipt {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-receipt:hover {
+            background: #2f855a;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px; /* Reduced padding */
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px; /* Reduced size */
+            height: 30px; /* Reduced size */
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px; /* Reduced margin */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 12px; /* Reduced padding */
+            border-radius: 8px;
+            margin-bottom: 15px; /* Reduced margin */
+            display: none;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .no-transactions {
+            text-align: center;
+            padding: 30px; /* Reduced padding */
+            color: #718096;
+        }
+
+        .no-transactions i {
+            font-size: 36px; /* Reduced size */
+            margin-bottom: 10px; /* Reduced margin */
+            color: #cbd5e0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px; /* Reduced gap */
+            margin-top: 20px; /* Reduced margin */
+            flex-wrap: wrap; /* Allow pagination to wrap */
+        }
+
+        .page-btn {
+            padding: 6px 10px; /* Reduced padding */
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px; /* Reduced font size */
+        }
+
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-btn:hover:not(.active) {
+            background: #edf2f7;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px; /* Reduced padding */
+            border-radius: 15px;
+            width: 95%; /* Increased width on mobile */
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 15px; /* Adjusted position */
+            top: 10px; /* Adjusted position */
+            font-size: 20px; /* Reduced size */
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .modal-title {
+            font-size: 20px; /* Reduced font size */
+            margin-bottom: 15px; /* Reduced margin */
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .receipt-container {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px; /* Reduced padding */
+            margin: 15px 0; /* Reduced margin */
+            border: 2px dashed #e2e8f0;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 15px; /* Reduced margin */
+            padding-bottom: 10px; /* Reduced padding */
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .receipt-bank-name {
+            font-size: 20px; /* Reduced font size */
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .receipt-subtitle {
+            color: #718096;
+            font-size: 12px; /* Reduced font size */
+        }
+
+        .receipt-details {
+            margin-bottom: 15px; /* Reduced margin */
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px; /* Reduced margin */
+            padding-bottom: 10px; /* Reduced padding */
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            color: #718096;
+            font-weight: bold;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .detail-value {
+            color: #2d3748;
+            font-weight: bold;
+            text-align: right;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        .amount-large {
+            font-size: 18px; /* Reduced font size */
+            color: #2d3748;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px; /* Reduced margin */
+            padding-top: 10px; /* Reduced padding */
+            border-top: 2px solid #e2e8f0;
+            color: #718096;
+            font-size: 11px; /* Reduced font size */
+        }
+
+        .receipt-actions {
+            display: flex;
+            gap: 8px; /* Reduced gap */
+            justify-content: center;
+            margin-top: 15px; /* Reduced margin */
+            flex-wrap: wrap; /* Allow buttons to wrap */
+        }
+
+        .export-options {
+            display: flex;
+            gap: 8px; /* Reduced gap */
+            margin-bottom: 15px; /* Reduced margin */
+            flex-wrap: wrap; /* Allow buttons to wrap */
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjusted minmax */
+            gap: 10px; /* Reduced gap */
+            margin-bottom: 20px; /* Reduced margin */
+        }
+
+        .summary-card {
+            background: #f7fafc;
+            padding: 15px; /* Reduced padding */
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .summary-number {
+            font-size: 18px; /* Reduced font size */
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            color: #718096;
+            font-size: 12px; /* Reduced font size */
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 10px;
+            }
+            
+            .bank-logo {
+                font-size: 20px;
+            }
+            
+            .content-area {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+            }
+            
+            .filters {
+                gap: 8px;
+            }
+            
+            .filter-group {
+                min-width: 100%; /* Full width on very small screens */
+            }
+            
+            .transactions-table {
+                font-size: 12px;
+            }
+            
+            .transactions-table th,
+            .transactions-table td {
+                padding: 8px;
+            }
+            
+            /* Hide less important columns on very small screens */
+            .transactions-table th:nth-child(2), /* Type column */
+            .transactions-table td:nth-child(2) {
+                display: none;
+            }
+            
+            .action-buttons {
+                flex-direction: row; /* Side by side on very small screens */
+            }
+            
+            .action-btn {
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+        }
+
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1200px;
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+                margin-bottom: 20px;
+                flex-wrap: nowrap; /* Prevent wrapping */
+            }
+            
+            .user-info {
+                display: block; /* Show user info */
+                width: auto; /* Auto width */
+                margin-top: 0; /* Remove top margin */
+            }
+            
+            .bank-logo {
+                font-size: 28px;
+            }
+            
+            .welcome {
+                font-size: 18px;
+            }
+            
+            .balance {
+                font-size: 24px;
+            }
+            
+            .nav-toggle {
+                display: none; /* Hide toggle on larger screens */
+            }
+            
+            .main-content {
+                grid-template-columns: 250px 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                display: block; /* Show sidebar */
+                position: static;
+                width: 100%;
+                height: auto;
+                border-radius: 15px;
+            }
+            
+            .content-area {
+                padding: 30px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+            
+            .filters {
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+            
+            .filter-group {
+                min-width: 200px;
+            }
+            
+            .transactions-table {
+                font-size: 14px;
+            }
+            
+            .transactions-table th,
+            .transactions-table td {
+                padding: 15px;
+            }
+            
+            /* Show all columns on larger screens */
+            .transactions-table th:nth-child(2),
+            .transactions-table td:nth-child(2) {
+                display: table-cell;
+            }
+            
+            .action-buttons {
+                flex-direction: row; /* Side by side */
+            }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="bank-logo"><span>Golden</span>Bridge Bank</div>
+            </div>
+            <div class="user-info">
+                <div class="welcome">Welcome, <span id="userName">User</span>!</div>
+                <div class="balance">$<span id="accountBalance" class="currency-format">0.00</span></div>
+            </div>
+            <button class="nav-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar" id="sidebar">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="transfer.html" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i> Transfer Money
+                </a>
+                <a href="transactions.html" class="nav-item active">
+                    <i class="fas fa-history"></i> Transactions
+                </a>
+                <a href="loan.html" class="nav-item">
+                    <i class="fas fa-hand-holding-usd"></i> Loans
+                </a>
+                <a href="card.html" class="nav-item">
+                    <i class="fas fa-credit-card"></i> Debit Card
+                </a>
+                <a href="support.html" class="nav-item">
+                    <i class="fas fa-headset"></i> Support
+                </a>
+                <a href="profile.html" class="nav-item">
+                    <i class="fas fa-user-cog"></i> Profile
+                </a>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="content-area">
+                <h2 class="section-title">Transaction History</h2>
+
+                <div class="error-message" id="errorMessage"></div>
+
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-number" id="totalTransactions">0</div>
+                        <div class="summary-label">Total Transactions</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number" id="totalDeposits">$0.00</div>
+                        <div class="summary-label">Total Deposits</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number" id="totalWithdrawals">$0.00</div>
+                        <div class="summary-label">Total Withdrawals</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number" id="pendingTransactions">0</div>
+                        <div class="summary-label">Pending</div>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group search-box">
+                        <label>Search Transactions</label>
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by description or ID..." oninput="filterTransactions()">
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Transaction Type</label>
+                        <select id="typeFilter" onchange="filterTransactions()">
+                            <option value="">All Types</option>
+                            <option value="deposit">Deposits</option>
+                            <option value="withdrawal">Withdrawals</option>
+                            <option value="transfer">Transfers</option>
+                            <option value="wire_transfer">Wire Transfers</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="statusFilter" onchange="filterTransactions()">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Date Range</label>
+                        <select id="dateFilter" onchange="filterTransactions()">
+                            <option value="all">All Time</option>
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>&nbsp;</label>
+                        <button class="btn" onclick="loadTransactions()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <button class="btn btn-secondary" onclick="exportToCSV()">
+                        <i class="fas fa-file-csv"></i> Export CSV
+                    </button>
+                    <button class="btn btn-secondary" onclick="printTransactions()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+
+                <div id="transactionsTable">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('receiptModal')">&times;</span>
+            <h3 class="modal-title">Transaction Receipt</h3>
+            
+            <div class="receipt-container" id="receiptContent">
+                <!-- Receipt content will be inserted here -->
+            </div>
+
+            <div class="receipt-actions">
+                <button class="btn" onclick="printReceipt()">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+                <button class="btn btn-secondary" onclick="downloadReceipt()">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3006/api';
+        let currentUser = null;
+        let allTransactions = [];
+        let currentPage = 1;
+        const transactionsPerPage = 10;
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
+
+        // Check if user is authenticated
+        function checkAuth() {
+            const token = localStorage.getItem('bank_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Verify token is still valid
+            fetch(`${API_BASE}/auth/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    localStorage.removeItem('bank_token');
+                    window.location.href = 'login.html';
+                }
+                return response.json();
+            })
+            .then(user => {
+                currentUser = user;
+                document.getElementById('userName').textContent = user.full_name;
+                document.getElementById('accountBalance').textContent = formatCurrencyValue(user.balance);
+                loadTransactions();
+            })
+            .catch(error => {
+                console.error('Auth check failed:', error);
+                localStorage.removeItem('bank_token');
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Load transactions from API
+        function loadTransactions() {
+            const token = localStorage.getItem('bank_token');
+            showLoading(true);
+            
+            fetch(`${API_BASE}/transactions`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(transactions => {
+                showLoading(false);
+                allTransactions = transactions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                updateSummaryCards(allTransactions);
+                displayTransactions(allTransactions);
+                setupPagination(allTransactions);
+            })
+            .catch(error => {
+                showLoading(false);
+                showError('Failed to load transactions: ' + error.message);
+            });
+        }
+
+        // Update summary cards
+        function updateSummaryCards(transactions) {
+            const total = transactions.length;
+            const pending = transactions.filter(t => t.status === 'pending').length;
+            
+            const deposits = transactions.filter(t => t.type === 'deposit' && t.status === 'approved');
+            const totalDeposits = deposits.reduce((sum, t) => sum + t.amount, 0);
+            
+            const withdrawals = transactions.filter(t => 
+                (t.type === 'withdrawal' || t.type === 'transfer' || t.type === 'wire_transfer') && 
+                t.status === 'approved'
+            );
+            const totalWithdrawals = withdrawals.reduce((sum, t) => sum + t.amount, 0);
+            
+            document.getElementById('totalTransactions').textContent = total;
+            document.getElementById('pendingTransactions').textContent = pending;
+            document.getElementById('totalDeposits').textContent = formatCurrencyValue(totalDeposits);
+            document.getElementById('totalWithdrawals').textContent = formatCurrencyValue(totalWithdrawals);
+        }
+
+        // Display transactions in table
+        function displayTransactions(transactions) {
+            const transactionsTable = document.getElementById('transactionsTable');
+            
+            if (transactions.length === 0) {
+                transactionsTable.innerHTML = `
+                    <div class="no-transactions">
+                        <i class="fas fa-receipt"></i>
+                        <h3>No transactions found</h3>
+                        <p>Your transaction history will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Apply pagination
+            const startIndex = (currentPage - 1) * transactionsPerPage;
+            const paginatedTransactions = transactions.slice(startIndex, startIndex + transactionsPerPage);
+
+            let html = `
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTransactions('created_at')">Date</th>
+                            <th onclick="sortTransactions('type')">Type</th>
+                            <th onclick="sortTransactions('description')">Description</th>
+                            <th onclick="sortTransactions('amount')">Amount</th>
+                            <th onclick="sortTransactions('status')">Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            paginatedTransactions.forEach(transaction => {
+                const statusClass = transaction.status === 'pending' ? 'status-pending' : 
+                                  transaction.status === 'approved' ? 'status-approved' : 'status-rejected';
+                
+                const amountClass = transaction.amount > 0 ? 'amount-positive' : 'amount-negative';
+                const amountSign = transaction.amount > 0 ? '+' : '';
+                const amount = transaction.type === 'deposit' ? transaction.amount : -transaction.amount;
+
+                html += `
+                    <tr>
+                        <td>${formatDate(transaction.created_at)}</td>
+                        <td>${formatType(transaction.type)}</td>
+                        <td>${transaction.description || 'No description'}</td>
+                        <td class="${amountClass} currency-format">${amountSign}$${formatCurrencyValue(Math.abs(amount))}</td>
+                        <td><span class="status-badge ${statusClass}">${transaction.status}</span></td>
+                        <td class="action-buttons">
+                            <button class="action-btn btn-view" onclick="viewTransaction(${transaction.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            ${transaction.status === 'approved' ? `
+                                <button class="action-btn btn-receipt" onclick="showReceipt(${transaction.id})">
+                                    <i class="fas fa-receipt"></i> Receipt
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            transactionsTable.innerHTML = html;
+        }
+
+        // Setup pagination
+        function setupPagination(transactions) {
+            const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+            const paginationDiv = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationDiv.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            // Previous button
+            html += `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            // Next button
+            html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+            
+            paginationDiv.innerHTML = html;
+        }
+
+        // Change page
+        function changePage(page) {
+            const totalPages = Math.ceil(allTransactions.length / transactionsPerPage);
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            displayTransactions(allTransactions);
+            setupPagination(allTransactions);
+            window.scrollTo(0, 0);
+        }
+
+        // Filter transactions based on search and filters
+        function filterTransactions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            const filteredTransactions = allTransactions.filter(transaction => {
+                const matchesSearch = transaction.description?.toLowerCase().includes(searchTerm) || 
+                                    transaction.unique_id?.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || transaction.type === typeFilter;
+                const matchesStatus = !statusFilter || transaction.status === statusFilter;
+                const matchesDate = filterByDate(transaction.created_at, dateFilter);
+
+                return matchesSearch && matchesType && matchesStatus && matchesDate;
+            });
+
+            currentPage = 1;
+            displayTransactions(filteredTransactions);
+            setupPagination(filteredTransactions);
+        }
+
+        // Filter by date
+        function filterByDate(dateString, filterValue) {
+            if (filterValue === 'all') return true;
+            
+            const transactionDate = new Date(dateString);
+            const today = new Date();
+            const daysAgo = new Date();
+            daysAgo.setDate(today.getDate() - parseInt(filterValue));
+            
+            return transactionDate >= daysAgo;
+        }
+
+        // Sort transactions
+        function sortTransactions(field) {
+            allTransactions.sort((a, b) => {
+                if (a[field] < b[field]) return -1;
+                if (a[field] > b[field]) return 1;
+                return 0;
+            });
+            displayTransactions(allTransactions);
+        }
+
+        // View transaction details
+        function viewTransaction(transactionId) {
+            const transaction = allTransactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            // For now, just show receipt
+            showReceipt(transactionId);
+        }
+
+        // Show receipt modal
+        function showReceipt(transactionId) {
+            const token = localStorage.getItem('bank_token');
+            const transaction = allTransactions.find(t => t.id === transactionId);
+            
+            if (!transaction) return;
+
+            fetch(`${API_BASE}/transactions/${transactionId}/receipt`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(receiptData => {
+                displayReceipt(receiptData);
+            })
+            .catch(error => {
+                // If receipt endpoint fails, use the transaction data we have
+                displayReceipt(transaction);
+            });
+        }
+
+        // Display receipt in modal
+        function displayReceipt(transaction) {
+            const receiptContent = document.getElementById('receiptContent');
+            
+            const amountClass = transaction.amount > 0 ? 'amount-positive' : 'amount-negative';
+            const amountSign = transaction.amount > 0 ? '+' : '';
+            
+            receiptContent.innerHTML = `
+                <div class="receipt-header">
+                    <div class="receipt-bank-name">GoldenBridge Bank</div>
+                    <div class="receipt-subtitle">Official Transaction Receipt</div>
+                </div>
+                
+                <div class="receipt-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction ID:</span>
+                        <span class="detail-value">${transaction.unique_id || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date & Time:</span>
+                        <span class="detail-value">${formatDateTime(transaction.created_at)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction Type:</span>
+                        <span class="detail-value">${formatType(transaction.type)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value">${transaction.status.toUpperCase()}</span>
+                    </div>
+                    
+                    ${transaction.recipient_name ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Recipient:</span>
+                        <span class="detail-value">${transaction.recipient_name}</span>
+                    </div>
+                    ` : ''}
+                    
+                    ${transaction.recipient_account ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Account Number:</span>
+                        <span class="detail-value">${transaction.recipient_account}</span>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Description:</span>
+                        <span class="detail-value">${transaction.description || 'No description'}</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Amount:</span>
+                        <span class="detail-value amount-large ${amountClass}">${amountSign}$${formatCurrencyValue(Math.abs(transaction.amount))}</span>
+                    </div>
+                </div>
+                
+                <div class="receipt-footer">
+                    <div>Enjoy a better life with our Digital Banking. Get free transfers, withrawals, bill payments, instant loans, and good annual interest on your savings.</div>
+                    <div>Generated on ${new Date().toLocaleDateString()}</div>
+                </div>
+            `;
+
+            document.getElementById('receiptModal').style.display = 'block';
+        }
+
+        // Print receipt
+        function printReceipt() {
+            const receiptContent = document.getElementById('receiptContent').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div style="padding: 20px; max-width: 600px; margin: 0 auto;">
+                    ${receiptContent}
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+
+        // Download receipt as PDF (simulated)
+        function downloadReceipt() {
+            showError('PDF download feature would be implemented in a production environment');
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const headers = ['Date', 'Type', 'Description', 'Amount', 'Status', 'Transaction ID'];
+            const csvData = [
+                headers.join(','),
+                ...allTransactions.map(t => [
+                    formatDate(t.created_at),
+                    formatType(t.type),
+                    `"${t.description || ''}"`,
+                    t.amount,
+                    t.status,
+                    t.unique_id || ''
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Print transactions
+        function printTransactions() {
+            const originalContent = document.body.innerHTML;
+            const transactionsContent = document.getElementById('transactionsTable').innerHTML;
+            
+            document.body.innerHTML = `
+                <div style="padding: 20px;">
+                    <h1>GoldenBridge Bank - Transaction History</h1>
+                    <p>Generated on ${new Date().toLocaleDateString()}</p>
+                    ${transactionsContent}
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        }
+
+        // Format currency value with commas
+        function formatCurrencyValue(value) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        // Format date and time
+        function formatDateTime(dateString) {
+            return new Date(dateString).toLocaleString();
+        }
+
+        // Format transaction type
+        function formatType(type) {
+            const types = {
+                'deposit': 'Deposit',
+                'withdrawal': 'Withdrawal',
+                'transfer': 'Local Transfer',
+                'wire_transfer': 'Wire Transfer'
+            };
+            return types[type] || type;
+        }
+
+        // Show loading state
+        function showLoading(show) {
+            const transactionsTable = document.getElementById('transactionsTable');
+            if (show) {
+                transactionsTable.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading transactions...</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('bank_token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - GoldenBridge Bank</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .conversation {
+    margin: 20px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.user-message {
+    background: #f7fafc;
+    border-left: 4px solid #667eea;
+}
+
+.admin-message {
+    background: #e6fffa;
+    border-left: 4px solid #38a169;
+}
+
+.response-form {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.ticket-details {
+    background: #f7fafc;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.detail-label {
+    font-weight: bold;
+    width: 100px;
+    color: #4a5568;
+}
+
+.detail-value {
+    flex: 1;
+    color: #2d3748;
+}
+
+        body {
+            background: #f5f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .disclaimer {
+            background: blue;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            width: 96%;
+            z-index: 1000;
+            border-left: rgb(241, 16, 16);
+            border-radius: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-bottom: 50px;
+            
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 60px auto 20px;
+            padding: 20px;
+            margin-top: 20px;
+            
+        }
+
+        .admin-header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .admin-title span {
+            color: #3498db;
+        }
+
+        .admin-info {
+            text-align: right;
+        }
+
+        .welcome-admin {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .admin-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+
+        .admin-sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .admin-nav {
+            list-style: none;
+        }
+
+        .admin-nav-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-nav-item:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .admin-nav-item.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .admin-main {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        .data-table th:hover {
+            background: #e9ecef;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #ffeaa7;
+            color: #d35400;
+        }
+
+        .status-approved {
+            background: #d5f5e3;
+            color: #27ae60;
+        }
+
+        .status-rejected {
+            background: #fadbd8;
+            color: #c0392b;
+        }
+
+        .status-frozen {
+            background: #d6eaf8;
+            color: #2980b9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .page-btn:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fadbd8;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background: #d5f5e3;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 1024px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                order: 2;
+            }
+
+            .admin-main {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                margin: 50px auto 20px;
+                padding: 10px;
+            }
+
+            .admin-header {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .admin-info {
+                text-align: center;
+            }
+
+            .admin-actions {
+                justify-content: center;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .data-table {
+                font-size: 12px;
+                display: block;
+                overflow-x: auto;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+                white-space: nowrap;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+                padding: 20px;
+                width: 95%;
+            }
+
+            .conversation {
+                max-height: 250px;
+                padding: 10px;
+            }
+
+            .message {
+                margin-bottom: 10px;
+                padding: 8px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                margin-bottom: 10px;
+            }
+
+            .detail-label {
+                width: 100%;
+                margin-bottom: 2px;
+            }
+
+            .response-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-title {
+                font-size: 22px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+
+            .modal-content {
+                padding: 15px;
+            }
+
+            .modal-title {
+                font-size: 20px;
+            }
+        }
+
+        /* Mobile Navigation Toggle */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #4a5568;
+            padding: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+
+            .admin-sidebar {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 80%;
+                height: 100vh;
+                z-index: 1000;
+                overflow-y: auto;
+            }
+
+            .admin-sidebar.active {
+                display: block;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .quick-action-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
+        }
+
+        .quick-action-btn i {
+            font-size: 24px;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .quick-action-btn h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .quick-action-btn p {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .user-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .user-detail-label {
+            font-weight: bold;
+            width: 150px;
+            color: #2c3e50;
+        }
+
+        .user-detail-value {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="disclaimer">
+        <button class="nav-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <div class="admin-title"><span>GoldenBridge</span> Admin Panel</div>
+            </div>
+            <div class="admin-info">
+                <div class="welcome-admin">Welcome, <span id="adminName">Administrator</span></div>
+                <div class="admin-actions">
+                    <button class="btn btn-secondary" onclick="refreshAllData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-danger" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-sidebar" id="adminSidebar">
+                <ul class="admin-nav">
+                    <li class="admin-nav-item active" onclick="showTab('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </li>
+                    <li class="admin-nav-item" onclick="showTab('users')">
+                        <i class="fas fa-users"></i> User Management
+                    </li>
+                    <li class="admin-nav-item" onclick="showTab('transactions')">
+                        <i class="fas fa-exchange-alt"></i> Transactions
+                    </li>
+                    <li class="admin-nav-item" onclick="showTab('loans')">
+                        <i class="fas fa-hand-holding-usd"></i> Loan Requests
+                    </li>
+                    <li class="admin-nav-item" onclick="showTab('support')">
+                        <i class="fas fa-headset"></i> Support Tickets
+                    </li>
+                    <li class="admin-nav-item" onclick="showTab('activities')">
+                        <i class="fas fa-history"></i> Activity Log
+                    </li>
+                    <li class="admin-nav-item" onclick="showTab('tools')">
+                        <i class="fas fa-tools"></i> Admin Tools
+                    </li>
+                </ul>
+            </div>
+
+            <div class="admin-main">
+                <!-- Error and Success Messages -->
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content active">
+                    <h2 class="section-title">Admin Dashboard</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="pendingUsers">0</div>
+                            <div class="stat-label">Pending Approval</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalTransactions">0</div>
+                            <div class="stat-label">Transactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="pendingTransactions">0</div>
+                            <div class="stat-label">Pending Transactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalLoans">0</div>
+                            <div class="stat-label">Loan Requests</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="pendingLoans">0</div>
+                            <div class="stat-label">Pending Loans</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" onclick="showTab('users')">
+                            <i class="fas fa-user-check"></i>
+                            <h3>Approve Users</h3>
+                            <p>Review pending registrations</p>
+                        </div>
+                        <div class="quick-action-btn" onclick="showTab('transactions')">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Review Transactions</h3>
+                            <p>Approve pending transactions</p>
+                        </div>
+                        <div class="quick-action-btn" onclick="showTab('loans')">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <h3>Process Loans</h3>
+                            <p>Review loan applications</p>
+                        </div>
+                        <div class="quick-action-btn" onclick="showTab('support')">
+                            <i class="fas fa-comments"></i>
+                            <h3>Support Tickets</h3>
+                            <p>Respond to user inquiries</p>
+                        </div>
+                    </div>
+
+                    <div class="recent-activities">
+                        <h3 class="section-title">Recent Activities</h3>
+                        <div id="recentActivities">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading activities...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Tab -->
+                <div id="users-tab" class="tab-content">
+                    <h2 class="section-title">User Management</h2>
+                    
+                    <div class="filters">
+                        <div class="search-box">
+                            <label>Search Users</label>
+                            <input type="text" id="userSearch" placeholder="Search by name or email..." oninput="filterUsers()">
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="userStatusFilter" onchange="filterUsers()">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Account Status</label>
+                            <select id="accountStatusFilter" onchange="filterUsers()">
+                                <option value="">All Accounts</option>
+                                <option value="active">Active</option>
+                                <option value="frozen">Frozen</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-primary" onclick="loadUsers()">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="usersTable">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading users...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Tab -->
+                <div id="transactions-tab" class="tab-content">
+                    <h2 class="section-title">Transaction Management</h2>
+                    
+                    <div class="filters">
+                        <div class="search-box">
+                            <label>Search Transactions</label>
+                            <input type="text" id="transactionSearch" placeholder="Search by description or ID..." oninput="filterTransactions()">
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="transactionStatusFilter" onchange="filterTransactions()">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Type</label>
+                            <select id="transactionTypeFilter" onchange="filterTransactions()">
+                                <option value="">All Types</option>
+                                <option value="transfer">Transfer</option>
+                                <option value="withdrawal">Withdrawal</option>
+                                <option value="deposit">Deposit</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-primary" onclick="loadTransactions()">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="transactionsTable">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading transactions...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loans Tab -->
+                <div id="loans-tab" class="tab-content">
+                    <h2 class="section-title">Loan Management</h2>
+                    
+                    <div class="filters">
+                        <div class="search-box">
+                            <label>Search Loans</label>
+                            <input type="text" id="loanSearch" placeholder="Search by user name..." oninput="filterLoans()">
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="loanStatusFilter" onchange="filterLoans()">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-primary" onclick="loadLoans()">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loansTable">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading loans...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Tab -->
+                <div id="support-tab" class="tab-content">
+                    <h2 class="section-title">Support Ticket Management</h2>
+                    
+                    <div class="filters">
+                        <div class="search-box">
+                            <label>Search Tickets</label>
+                            <input type="text" id="ticketSearch" placeholder="Search by subject or user..." oninput="filterTickets()">
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="ticketStatusFilter" onchange="filterTickets()">
+                                <option value="">All Statuses</option>
+                                <option value="open">Open</option>
+                                <option value="closed">Closed</option>
+                                <option value="in progress">In Progress</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-primary" onclick="loadSupportTickets()">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="ticketsTable">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading tickets...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activities Tab -->
+                <div id="activities-tab" class="tab-content">
+                    <h2 class="section-title">Admin Activity Log</h2>
+                    
+                    <div class="filters">
+                        <div class="search-box">
+                            <label>Search Activities</label>
+                            <input type="text" id="activitySearch" placeholder="Search by action or details..." oninput="filterActivities()">
+                        </div>
+                        <div class="filter-group">
+                            <label>Action Type</label>
+                            <select id="actionTypeFilter" onchange="filterActivities()">
+                                <option value="">All Actions</option>
+                                <option value="approve">Approve</option>
+                                <option value="reject">Reject</option>
+                                <option value="freeze">Freeze</option>
+                                <option value="create">Create</option>
+                                <option value="edit">Edit</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-primary" onclick="loadActivities()">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="activitiesTable">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading activities...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Tab -->
+                <div id="tools-tab" class="tab-content">
+                    <h2 class="section-title">Admin Tools</h2>
+                    
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" onclick="showEditBalanceModal()">
+                            <i class="fas fa-coins"></i>
+                            <h3>Edit User Balance</h3>
+                            <p>Modify user account balances</p>
+                        </div>
+                        <div class="quick-action-btn" onclick="showCreateTransactionModal()">
+                            <i class="fas fa-exchange-alt"></i>
+                            <h3>Create Transaction</h3>
+                            <p>Create deposits, withdrawals, or transfers</p>
+                        </div>
+                        <div class="quick-action-btn" onclick="showMassPaymentModal()">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <h3>Mass Payment</h3>
+                            <p>Send payments to multiple users</p>
+                        </div>
+                        <div class="quick-action-btn" onclick="showSystemReportModal()">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>System Report</h3>
+                            <p>Generate financial reports</p>
+                        </div>
+                    </div>
+
+                    <div class="system-info">
+                        <h3 class="section-title">System Information</h3>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalDbRecords">0</div>
+                            <div class="stat-label">Total Database Records</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Edit Balance Modal -->
+    <div class="modal" id="editBalanceModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('editBalanceModal')">&times;</span>
+            <h3 class="modal-title">Edit User Balance</h3>
+            <div class="form-group">
+                <label for="balanceUserId">User</label>
+                <select id="balanceUserId" onchange="loadUserBalance()">
+                    <option value="">Select User</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="currentBalance">Current Balance</label>
+                <input type="text" id="currentBalance" readonly>
+            </div>
+            <div class="form-group">
+                <label for="newBalance">New Balance</label>
+                <input type="number" id="newBalance" step="0.01" placeholder="Enter new balance">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('editBalanceModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="updateUserBalance()">Update Balance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Transaction Modal -->
+    <div class="modal" id="createTransactionModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('createTransactionModal')">&times;</span>
+            <h3 class="modal-title">Create Transaction</h3>
+            <div class="form-group">
+                <label for="transactionUserId">User</label>
+                <select id="transactionUserId">
+                    <option value="">Select User</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="transactionType">Transaction Type</label>
+                <select id="transactionType" onchange="toggleRecipientField()">
+                    <option value="deposit">Deposit</option>
+                    <option value="withdrawal">Withdrawal</option>
+                    <option value="transfer">Transfer</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="transactionAmount">Amount</label>
+                <input type="number" id="transactionAmount" step="0.01" placeholder="Enter amount">
+            </div>
+            <div class="form-group" id="recipientGroup" style="display: none;">
+                <label for="transactionRecipient">Recipient Account</label>
+                <input type="text" id="transactionRecipient" placeholder="Recipient account number">
+            </div>
+            <div class="form-group">
+                <label for="transactionDescription">Description</label>
+                <input type="text" id="transactionDescription" placeholder="Transaction description">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('createTransactionModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="createTransaction()">Create Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal" id="userDetailModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('userDetailModal')">&times;</span>
+            <h3 class="modal-title">User Details</h3>
+            <div id="userDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Ticket Details Modal -->
+    <div class="modal" id="ticketDetailModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('ticketDetailModal')">&times;</span>
+            <h3 class="modal-title">Ticket Details</h3>
+            <div id="ticketModalContent"></div>
+        </div>
+    </div>
+
+    <script>
+    const API_BASE = 'http://localhost:3006/api';
+    let currentAdmin = null;
+    let allUsers = [];
+    let allTransactions = [];
+    let allLoans = [];
+    let allTickets = [];
+    let allActivities = [];
+
+    // Check admin authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        checkAdminAuth();
+    });
+
+    // Check if admin is authenticated
+    function checkAdminAuth() {
+        const token = localStorage.getItem('bank_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Try to access admin endpoint - if it works, user is admin
+        fetch(`${API_BASE}/admin/users`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Not an admin or token invalid
+                localStorage.removeItem('bank_token');
+                window.location.href = 'login.html';
+                throw new Error('Not an admin');
+            }
+            return response.json();
+        })
+        .then(users => {
+            // Successfully accessed admin endpoint - user is admin
+            document.getElementById('adminName').textContent = 'Administrator';
+            allUsers = users;
+            loadAllData();
+        })
+        .catch(error => {
+            console.error('Admin auth check failed:', error);
+            localStorage.removeItem('bank_token');
+            window.location.href = 'login.html';
+        });
+    }
+
+    // Load all data for admin panel
+    function loadAllData() {
+        loadUsers();
+        loadTransactions();
+        loadLoans();
+        loadSupportTickets();
+        loadActivities();
+        updateDashboardStats();
+    }
+
+    // Show/hide tabs
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Deactivate all nav items
+        document.querySelectorAll('.admin-nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+        
+        // Activate selected nav item
+        document.querySelector(`.admin-nav-item[onclick="showTab('${tabName}')"]`).classList.add('active');
+        
+        // Load data for the tab if needed
+        switch(tabName) {
+            case 'users':
+                loadUsers();
+                break;
+            case 'transactions':
+                loadTransactions();
+                break;
+            case 'loans':
+                loadLoans();
+                break;
+            case 'support':
+                loadSupportTickets();
+                break;
+            case 'activities':
+                loadActivities();
+                break;
+        }
+        
+        // Close sidebar on mobile after selecting a tab
+        if (window.innerWidth <= 768) {
+            closeSidebar();
+        }
+    }
+
+    // Toggle sidebar on mobile
+    function toggleSidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        // Prevent body scrolling when sidebar is open
+        if (sidebar.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Close sidebar
+    function closeSidebar() {
+        const sidebar = document.getElementById('adminSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('adminSidebar');
+        const toggleBtn = document.querySelector('.nav-toggle');
+        
+        if (window.innerWidth <= 768 && 
+            sidebar.classList.contains('active') &&
+            !sidebar.contains(event.target) &&
+            !toggleBtn.contains(event.target)) {
+            closeSidebar();
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+        }
+    });
+
+    // Load users data
+    function loadUsers() {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/users`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(users => {
+            allUsers = users;
+            displayUsers(users);
+            updateDashboardStats();
+        })
+        .catch(error => {
+            console.error('Error loading users:', error);
+            showError('Failed to load users: ' + error.message);
+        });
+    }
+
+    // Display users in table
+    function displayUsers(users) {
+        const usersTable = document.getElementById('usersTable');
+        
+        if (users.length === 0) {
+            usersTable.innerHTML = '<p>No users found.</p>';
+            return;
+        }
+
+        let html = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Balance</th>
+                        <th>Account</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        users.forEach(user => {
+            const statusClass = user.status === 'pending' ? 'status-pending' : 
+                              user.status === 'approved' ? 'status-approved' : 'status-rejected';
+            
+            const accountStatus = user.is_frozen ? 'Frozen' : 'Active';
+            const accountClass = user.is_frozen ? 'status-frozen' : 'status-approved';
+
+            html += `
+                <tr>
+                    <td>${user.full_name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge ${statusClass}">${user.status}</span></td>
+                    <td>$${Number(user.balance).toFixed(2)}</td>
+                    <td><span class="status-badge ${accountClass}">${accountStatus}</span></td>
+                    <td class="action-buttons">
+                        ${user.status === 'pending' ? `
+                            <button class="action-btn btn-success" onclick="approveUser(${user.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="action-btn btn-danger" onclick="rejectUser(${user.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        ` : ''}
+                        <button class="action-btn btn-primary" onclick="showUserDetails(${user.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        ${user.is_frozen ? `
+                            <button class="action-btn btn-success" onclick="toggleFreezeUser(${user.id}, false)">
+                                <i class="fas fa-unlock"></i> Unfreeze
+                            </button>
+                        ` : `
+                            <button class="action-btn btn-danger" onclick="toggleFreezeUser(${user.id}, true)">
+                                <i class="fas fa-lock"></i> Freeze
+                            </button>
+                        `}
+                        <button class="action-btn btn-primary" onclick="showEditBalanceModalForUser(${user.id})">
+                            <i class="fas fa-edit"></i> Edit Balance
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        usersTable.innerHTML = html;
+    }
+
+    // Approve user
+    function approveUser(userId) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/users/${userId}/approve`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('User approved successfully!');
+                loadUsers();
+            }
+        })
+        .catch(error => {
+            showError('Error approving user: ' + error.message);
+        });
+    }
+
+    // Reject user
+    function rejectUser(userId) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/users/${userId}/reject`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('User rejected successfully!');
+                loadUsers();
+            }
+        })
+        .catch(error => {
+            showError('Error rejecting user: ' + error.message);
+        });
+    }
+
+    // Toggle user freeze status
+    function toggleFreezeUser(userId, freeze) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/users/${userId}/freeze`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ is_frozen: freeze })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess(`User account ${freeze ? 'frozen' : 'unfrozen'} successfully!`);
+                loadUsers();
+            }
+        })
+        .catch(error => {
+            showError('Error updating user status: ' + error.message);
+        });
+    }
+
+    // Show user details
+    function showUserDetails(userId) {
+        const user = allUsers.find(u => u.id == userId);
+        if (!user) return;
+
+        const modalContent = document.getElementById('userDetailContent');
+        modalContent.innerHTML = `
+            <div class="user-details">
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Full Name:</div>
+                    <div class="user-detail-value">${user.full_name}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Email:</div>
+                    <div class="user-detail-value">${user.email}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Phone:</div>
+                    <div class="user-detail-value">${user.phone_number}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Date of Birth:</div>
+                    <div class="user-detail-value">${user.date_of_birth}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Balance:</div>
+                    <div class="user-detail-value">$${user.balance.toFixed(2)}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Status:</div>
+                    <div class="user-detail-value">${user.status}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Account Status:</div>
+                    <div class="user-detail-value">${user.is_frozen ? 'Frozen' : 'Active'}</div>
+                </div>
+                <div class="user-detail-row">
+                    <div class="user-detail-label">Member Since:</div>
+                    <div class="user-detail-value">${new Date(user.created_at).toLocaleDateString()}</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="showEditBalanceModalForUser(${user.id})">
+                    <i class="fas fa-edit"></i> Edit Balance
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal('userDetailModal')">Close</button>
+            </div>
+        `;
+
+        showModal('userDetailModal');
+    }
+
+    // Show edit balance modal for a specific user
+    function showEditBalanceModalForUser(userId) {
+        const user = allUsers.find(u => u.id == userId);
+        if (!user) return;
+
+        const modal = document.getElementById('editBalanceModal');
+        const userSelect = document.getElementById('balanceUserId');
+        
+        // Populate user dropdown and select the specific user
+        userSelect.innerHTML = '';
+        allUsers.forEach(u => {
+            if (u.status === 'approved') {
+                const option = document.createElement('option');
+                option.value = u.id;
+                option.textContent = `${u.full_name} (${u.email}) - $${u.balance}`;
+                option.selected = u.id == userId;
+                userSelect.appendChild(option);
+            }
+        });
+        
+        document.getElementById('currentBalance').value = `$${user.balance.toFixed(2)}`;
+        document.getElementById('newBalance').value = user.balance.toFixed(2);
+        
+        modal.style.display = 'block';
+    }
+
+    // Show edit balance modal
+    function showEditBalanceModal() {
+        const modal = document.getElementById('editBalanceModal');
+        const userSelect = document.getElementById('balanceUserId');
+        
+        // Populate user dropdown
+        userSelect.innerHTML = '<option value="">Select User</option>';
+        allUsers.forEach(user => {
+            if (user.status === 'approved') {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.full_name} (${user.email}) - $${user.balance}`;
+                userSelect.appendChild(option);
+            }
+        });
+        
+        document.getElementById('currentBalance').value = '';
+        document.getElementById('newBalance').value = '';
+        
+        modal.style.display = 'block';
+    }
+
+    // Load user balance when selected
+    function loadUserBalance() {
+        const userId = document.getElementById('balanceUserId').value;
+        const user = allUsers.find(u => u.id == userId);
+        
+        if (user) {
+            document.getElementById('currentBalance').value = `$${user.balance.toFixed(2)}`;
+            document.getElementById('newBalance').value = user.balance.toFixed(2);
+        } else {
+            document.getElementById('currentBalance').value = '';
+            document.getElementById('newBalance').value = '';
+        }
+    }
+
+    // Update user balance
+    function updateUserBalance() {
+        const userId = document.getElementById('balanceUserId').value;
+        const newBalance = parseFloat(document.getElementById('newBalance').value);
+        const token = localStorage.getItem('bank_token');
+        
+        if (!userId || isNaN(newBalance)) {
+            showError('Please select a user and enter a valid balance');
+            return;
+        }
+        
+        fetch(`${API_BASE}/admin/users/${userId}/balance`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ balance: newBalance })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Balance updated successfully!');
+                closeModal('editBalanceModal');
+                loadUsers(); // Refresh user list
+            }
+        })
+        .catch(error => {
+            showError('Error updating balance: ' + error.message);
+        });
+    }
+
+    // Show create transaction modal
+    function showCreateTransactionModal() {
+        const modal = document.getElementById('createTransactionModal');
+        const userSelect = document.getElementById('transactionUserId');
+        
+        // Populate user dropdown
+        userSelect.innerHTML = '<option value="">Select User</option>';
+        allUsers.forEach(user => {
+            if (user.status === 'approved') {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.full_name} (${user.email})`;
+                userSelect.appendChild(option);
+            }
+        });
+        
+        // Reset form
+        document.getElementById('transactionType').value = 'deposit';
+        document.getElementById('transactionAmount').value = '';
+        document.getElementById('transactionRecipient').value = '';
+        document.getElementById('transactionDescription').value = '';
+        document.getElementById('recipientGroup').style.display = 'none';
+        
+        modal.style.display = 'block';
+    }
+
+    // Toggle recipient field based on transaction type
+    function toggleRecipientField() {
+        const type = document.getElementById('transactionType').value;
+        document.getElementById('recipientGroup').style.display = type === 'transfer' ? 'block' : 'none';
+    }
+
+    // Create transaction
+    function createTransaction() {
+        const userId = document.getElementById('transactionUserId').value;
+        const type = document.getElementById('transactionType').value;
+        const amount = parseFloat(document.getElementById('transactionAmount').value);
+        const description = document.getElementById('transactionDescription').value;
+        const recipient = document.getElementById('transactionRecipient').value;
+        const token = localStorage.getItem('bank_token');
+        
+        if (!userId || isNaN(amount) || amount <= 0) {
+            showError('Please select a user and enter a valid amount');
+            return;
+        }
+        
+        if (type === 'transfer' && !recipient) {
+            showError('Please enter recipient account for transfer');
+            return;
+        }
+        
+        const payload = {
+            user_id: userId,
+            type: type,
+            amount: amount,
+            description: description,
+            status: 'approved' // Auto-approve admin-created transactions
+        };
+        
+        if (type === 'transfer') {
+            payload.recipient_account = recipient;
+            payload.recipient_name = 'Admin Transfer';
+        }
+        
+        fetch(`${API_BASE}/admin/transactions/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Transaction created successfully!');
+                closeModal('createTransactionModal');
+                loadTransactions(); // Refresh transaction list
+                loadUsers(); // Refresh user list to see updated balances
+            }
+        })
+        .catch(error => {
+            showError('Error creating transaction: ' + error.message);
+        });
+    }
+
+    // Load transactions
+    function loadTransactions() {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/transactions/all`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(transactions => {
+            allTransactions = transactions;
+            displayTransactions(transactions);
+            updateDashboardStats();
+        })
+        .catch(error => {
+            console.error('Error loading transactions:', error);
+            showError('Failed to load transactions: ' + error.message);
+        });
+    }
+
+    // Display transactions in table
+    function displayTransactions(transactions) {
+        const transactionsTable = document.getElementById('transactionsTable');
+        
+        if (transactions.length === 0) {
+            transactionsTable.innerHTML = '<p>No transactions found.</p>';
+            return;
+        }
+
+        let html = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        transactions.forEach(transaction => {
+            const statusClass = transaction.status === 'pending' ? 'status-pending' : 
+                              transaction.status === 'approved' ? 'status-approved' : 'status-rejected';
+
+            html += `
+                <tr>
+                    <td>${transaction.unique_id}</td>
+                    <td>${transaction.user_name}</td>
+                    <td>${transaction.type}</td>
+                    <td>$${transaction.amount.toFixed(2)}</td>
+                    <td>${transaction.description || 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${transaction.status}</span></td>
+                    <td>${new Date(transaction.created_at).toLocaleDateString()}</td>
+                    <td class="action-buttons">
+                        ${transaction.status === 'pending' ? `
+                            <button class="action-btn btn-success" onclick="approveTransaction(${transaction.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="action-btn btn-danger" onclick="rejectTransaction(${transaction.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        transactionsTable.innerHTML = html;
+    }
+
+    // Approve transaction
+    function approveTransaction(transactionId) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/transactions/${transactionId}/approve`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Transaction approved successfully!');
+                loadTransactions();
+            }
+        })
+        .catch(error => {
+            showError('Error approving transaction: ' + error.message);
+        });
+    }
+
+    // Reject transaction
+    function rejectTransaction(transactionId) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/transactions/${transactionId}/reject`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Transaction rejected successfully!');
+                loadTransactions();
+            }
+        })
+        .catch(error => {
+            showError('Error rejecting transaction: ' + error.message);
+        });
+    }
+
+    // Load loans
+    function loadLoans() {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/loans/pending`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(loans => {
+            allLoans = loans;
+            displayLoans(loans);
+            updateDashboardStats();
+        })
+        .catch(error => {
+            console.error('Error loading loans:', error);
+            showError('Failed to load loans: ' + error.message);
+        });
+    }
+
+    // Display loans in table
+    function displayLoans(loans) {
+        const loansTable = document.getElementById('loansTable');
+        
+        if (loans.length === 0) {
+            loansTable.innerHTML = '<p>No loan requests found.</p>';
+            return;
+        }
+
+        let html = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Term</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        loans.forEach(loan => {
+            const statusClass = loan.status === 'pending' ? 'status-pending' : 
+                              loan.status === 'approved' ? 'status-approved' : 'status-rejected';
+
+            html += `
+                <tr>
+                    <td>${loan.user_name}</td>
+                    <td>$${loan.amount.toFixed(2)}</td>
+                    <td>${loan.term} months</td>
+                    <td><span class="status-badge ${statusClass}">${loan.status}</span></td>
+                    <td>${new Date(loan.created_at).toLocaleDateString()}</td>
+                    <td class="action-buttons">
+                        ${loan.status === 'pending' ? `
+                            <button class="action-btn btn-success" onclick="approveLoan(${loan.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="action-btn btn-danger" onclick="rejectLoan(${loan.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        loansTable.innerHTML = html;
+    }
+
+    // Approve loan
+    function approveLoan(loanId) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/loans/${loanId}/approve`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Loan approved successfully!');
+                loadLoans();
+            }
+        })
+        .catch(error => {
+            showError('Error approving loan: ' + error.message);
+        });
+    }
+
+    // Reject loan
+    function rejectLoan(loanId) {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/loans/${loanId}/reject`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Loan rejected successfully!');
+                loadLoans();
+            }
+        })
+        .catch(error => {
+            showError('Error rejecting loan: ' + error.message);
+        });
+    }
+
+    // Load support tickets
+    function loadSupportTickets() {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/support-tickets`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(tickets => {
+            allTickets = tickets;
+            displayTickets(tickets);
+        })
+        .catch(error => {
+            console.error('Error loading tickets:', error);
+            showError('Failed to load support tickets: ' + error.message);
+        });
+    }
+
+    // Display tickets in table
+    function displayTickets(tickets) {
+        const ticketsTable = document.getElementById('ticketsTable');
+        
+        if (tickets.length === 0) {
+            ticketsTable.innerHTML = '<p>No support tickets found.</p>';
+            return;
+        }
+
+        let html = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        tickets.forEach(ticket => {
+            const statusClass = ticket.status === 'open' ? 'status-pending' : 
+                              ticket.status === 'closed' ? 'status-approved' : 'status-rejected';
+
+            html += `
+                <tr>
+                    <td>${ticket.user_name}</td>
+                    <td>${ticket.subject}</td>
+                    <td><span class="status-badge ${statusClass}">${ticket.status}</span></td>
+                    <td>${new Date(ticket.created_at).toLocaleDateString()}</td>
+                    <td class="action-buttons">
+                        <button class="action-btn btn-primary" onclick="viewTicketDetails(${ticket.id})">
+                            <i class="fas fa-reply"></i> Respond
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        ticketsTable.innerHTML = html;
+    }
+
+    // Load activities
+    function loadActivities() {
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/activities`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(activities => {
+            allActivities = activities;
+            displayActivities(activities);
+        })
+        .catch(error => {
+            console.error('Error loading activities:', error);
+            showError('Failed to load activities: ' + error.message);
+        });
+    }
+
+    // Display activities in table
+    function displayActivities(activities) {
+        const activitiesTable = document.getElementById('activitiesTable');
+        
+        if (activities.length === 0) {
+            activitiesTable.innerHTML = '<p>No activities found.</p>';
+            return;
+        }
+
+        let html = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Admin</th>
+                        <th>Action</th>
+                        <th>Target</th>
+                        <th>Details</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        activities.forEach(activity => {
+            html += `
+                <tr>
+                    <td>${activity.admin_name}</td>
+                    <td>${activity.action}</td>
+                    <td>${activity.target_type} #${activity.target_id}</td>
+                    <td>${activity.details}</td>
+                    <td>${new Date(activity.created_at).toLocaleString()}</td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        activitiesTable.innerHTML = html;
+    }
+
+    // Update dashboard statistics
+    function updateDashboardStats() {
+        const totalUsers = allUsers.length;
+        const pendingUsers = allUsers.filter(user => user.status === 'pending').length;
+        const totalTransactions = allTransactions.length;
+        const pendingTransactions = allTransactions.filter(t => t.status === 'pending').length;
+        const totalLoans = allLoans.length;
+        const pendingLoans = allLoans.filter(loan => loan.status === 'pending').length;
+        
+        document.getElementById('totalUsers').textContent = totalUsers;
+        document.getElementById('pendingUsers').textContent = pendingUsers;
+        document.getElementById('totalTransactions').textContent = totalTransactions;
+        document.getElementById('pendingTransactions').textContent = pendingTransactions;
+        document.getElementById('totalLoans').textContent = totalLoans;
+        document.getElementById('pendingLoans').textContent = pendingLoans;
+        document.getElementById('totalDbRecords').textContent = 
+            allUsers.length + allTransactions.length + allLoans.length + allTickets.length;
+    }
+
+    // Refresh all data
+    function refreshAllData() {
+        showSuccess('Refreshing data...');
+        loadAllData();
+    }
+
+    // Show modal
+    function showModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    // Close modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Show error message
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    // Show success message
+    function showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        setTimeout(() => {
+            successDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    // Logout function
+    function logout() {
+        localStorage.removeItem('bank_token');
+        window.location.href = 'login.html';
+    }
+
+    // Updated viewTicketDetails function - FIXED
+    function viewTicketDetails(ticketId) {
+        const token = localStorage.getItem('bank_token');
+        
+        console.log('Loading ticket details for ID:', ticketId);
+        
+        // Get ticket details
+        fetch(`${API_BASE}/admin/support-tickets/${ticketId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch ticket details');
+            }
+            return response.json();
+        })
+        .then(ticket => {
+            console.log('Ticket details received:', ticket);
+            
+            // Get conversation from ADMIN endpoint
+            return fetch(`${API_BASE}/admin/support-tickets/${ticketId}/conversation`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch conversation');
+                }
+                return response.json();
+            })
+            .then(messages => {
+                console.log('Conversation data received:', messages);
+                
+                // Ensure messages is always an array
+                if (!Array.isArray(messages)) {
+                    console.log('Converting messages to array');
+                    messages = messages ? [messages] : [];
+                }
+                
+                console.log('Final messages array:', messages);
+                displayTicketModal(ticket, messages);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading ticket details:', error);
+            showError('Error loading ticket details: ' + error.message);
+        });
+    }
+
+    // Display modal with conversation - FIXED
+    function displayTicketModal(ticket, messages) {
+        console.log('Displaying modal with messages:', messages);
+        
+        // Double-check that messages is an array
+        if (!Array.isArray(messages)) {
+            console.log('Messages is not an array, converting...');
+            messages = messages ? [messages] : [];
+        }
+        
+        let conversationHtml = '';
+        
+        if (messages.length === 0) {
+            conversationHtml = '<p>No messages found in this conversation.</p>';
+        } else {
+            messages.forEach(msg => {
+                // Add safety checks for message properties
+                const senderType = msg.sender_type || 'user';
+                const userName = msg.user_name || 'User';
+                const messageContent = msg.message || 'No message content';
+                const messageDate = msg.created_at ? new Date(msg.created_at).toLocaleString() : 'Unknown date';
+                
+                conversationHtml += `
+                    <div class="message ${senderType === 'admin' ? 'admin-message' : 'user-message'}">
+                        <div class="message-header">
+                            <strong>${senderType === 'admin' ? 'Support Agent' : userName}:</strong>
+                            <span>${messageDate}</span>
+                        </div>
+                        <div class="message-content">${messageContent}</div>
+                    </div>
+                `;
+            });
+        }
+
+        const modalContent = `
+            <div class="ticket-details">
+                <div class="detail-row">
+                    <div class="detail-label">Ticket ID:</div>
+                    <div class="detail-value">#${ticket.id}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">User:</div>
+                    <div class="detail-value">${ticket.user_name || 'Unknown'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Subject:</div>
+                    <div class="detail-value">${ticket.subject || 'No subject'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">${ticket.status ? ticket.status.toUpperCase() : 'UNKNOWN'}</div>
+                </div>
+            </div>
+
+            <div class="conversation">
+                <h4>Conversation (${messages.length} messages)</h4>
+                ${conversationHtml}
+            </div>
+
+            <div class="response-form">
+                <h4>Send Response</h4>
+                <textarea id="adminResponseText" placeholder="Type your response here..." rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                <div class="response-actions" style="margin-top: 10px; display: flex; align-items: center;">
+                    <button class="btn btn-primary" onclick="sendTicketResponse(${ticket.id})">
+                        <i class="fas fa-reply"></i> Send Response
+                    </button>
+                    <select id="responseStatus" style="margin-left: 10px; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                        <option value="in progress">Mark as In Progress</option>
+                        <option value="closed">Mark as Closed</option>
+                    </select>
+                </div>
+            </div>
+        `;
+
+        // Show modal
+        document.getElementById('ticketModalContent').innerHTML = modalContent;
+        document.getElementById('ticketDetailModal').style.display = 'block';
+    }
+
+    // Send response from detail modal - FIXED
+    function sendTicketResponse(ticketId) {
+        const responseText = document.getElementById('adminResponseText').value;
+        const status = document.getElementById('responseStatus').value;
+        
+        if (!responseText) {
+            alert('Please enter a response message');
+            return;
+        }
+
+        const token = localStorage.getItem('bank_token');
+        
+        fetch(`${API_BASE}/admin/support-tickets/${ticketId}/respond`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                response: responseText,
+                status: status
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showSuccess('Response sent successfully!');
+                closeModal('ticketDetailModal');
+                loadSupportTickets();
+            }
+        })
+        .catch(error => {
+            showError('Error sending response: ' + error.message);
+        });
+    }
+
+    // Filter functions
+    function filterUsers() {
+        const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('userStatusFilter').value;
+        const accountFilter = document.getElementById('accountStatusFilter').value;
+
+        const filteredUsers = allUsers.filter(user => {
+            const matchesSearch = user.full_name.toLowerCase().includes(searchTerm) || 
+                                user.email.toLowerCase().includes(searchTerm);
+            const matchesStatus = !statusFilter || user.status === statusFilter;
+            const matchesAccount = !accountFilter || 
+                                (accountFilter === 'active' && !user.is_frozen) ||
+                                (accountFilter === 'frozen' && user.is_frozen);
+
+            return matchesSearch && matchesStatus && matchesAccount;
+        });
+
+        displayUsers(filteredUsers);
+    }
+
+    function filterTransactions() {
+        const searchTerm = document.getElementById('transactionSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('transactionStatusFilter').value;
+        const typeFilter = document.getElementById('transactionTypeFilter').value;
+
+        const filteredTransactions = allTransactions.filter(transaction => {
+            const matchesSearch = transaction.description?.toLowerCase().includes(searchTerm) || 
+                                transaction.unique_id.toLowerCase().includes(searchTerm);
+            const matchesStatus = !statusFilter || transaction.status === statusFilter;
+            const matchesType = !typeFilter || transaction.type === typeFilter;
+
+            return matchesSearch && matchesStatus && matchesType;
+        });
+
+        displayTransactions(filteredTransactions);
+    }
+
+    function filterLoans() {
+        const searchTerm = document.getElementById('loanSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('loanStatusFilter').value;
+
+        const filteredLoans = allLoans.filter(loan => {
+            const matchesSearch = loan.user_name.toLowerCase().includes(searchTerm);
+            const matchesStatus = !statusFilter || loan.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        displayLoans(filteredLoans);
+    }
+
+    function filterTickets() {
+        const searchTerm = document.getElementById('ticketSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('ticketStatusFilter').value;
+
+        const filteredTickets = allTickets.filter(ticket => {
+            const matchesSearch = ticket.subject.toLowerCase().includes(searchTerm) || 
+                                ticket.user_name.toLowerCase().includes(searchTerm);
+            const matchesStatus = !statusFilter || ticket.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        displayTickets(filteredTickets);
+    }
+
+    function filterActivities() {
+        const searchTerm = document.getElementById('activitySearch').value.toLowerCase();
+        const actionFilter = document.getElementById('actionTypeFilter').value;
+
+        const filteredActivities = allActivities.filter(activity => {
+            const matchesSearch = activity.details.toLowerCase().includes(searchTerm) || 
+                                activity.action.toLowerCase().includes(searchTerm);
+            const matchesAction = !actionFilter || activity.action.includes(actionFilter);
+
+            return matchesSearch && matchesAction;
+        });
+
+        displayActivities(filteredActivities);
+    }
+</script>
+</body>
+</html>
