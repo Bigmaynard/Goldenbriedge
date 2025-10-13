@@ -54,6 +54,15 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Add this route to your server.js
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'GoldenBridge Bank API is running!',
+    api_documentation: 'Use /api endpoints to access banking services'
+  });
+});
+
 // Middleware
 app.use(express.json());
 
