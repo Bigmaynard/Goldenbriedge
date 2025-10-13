@@ -6,7 +6,16 @@ const { pool } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3006;
-
+if (process.env.NODE_ENV === 'production') {
+  const { Pool } = require('pg');
+  // Override the pool with SSL configuration
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false // This is REQUIRED for Render PostgreSQL
+    }
+  });
+}
 // ✅ PROPER CORS Configuration for Development & Production
 const corsOptions = {
   origin: function (origin, callback) {
