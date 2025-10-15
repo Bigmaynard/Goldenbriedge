@@ -13,7 +13,7 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 // ✅ PROPER CORS Configuration
 const corsOptions = {
@@ -48,6 +48,27 @@ const limiter = rateLimit({
   max: 100
 });
 app.use(limiter);
+
+// Add this test route before your other routes
+app.get('/debug-password', async (req, res) => {
+  try {
+    const bcrypt = require('bcryptjs');
+    const testPassword = 'admin123';
+    const storedHash = '$2a$10$8K1p/a0dRL1SzdiKJ.3ZJ.6O.7b2p6c8q2QkZc8b5nY9vV1mX6OaK';
+    
+    const isMatch = await bcrypt.compare(testPassword, storedHash);
+    
+    res.json({
+      test_password: testPassword,
+      stored_hash: storedHash,
+      bcrypt_match: isMatch,
+      message: isMatch ? '✅ Password should work!' : '❌ Password comparison failed',
+      bcrypt_version: 'using bcryptjs'
+    });
+  } catch (err) {
+    res.json({ error: err.message });
+  }
+});
 
 // Root route
 app.get('/', (req, res) => {

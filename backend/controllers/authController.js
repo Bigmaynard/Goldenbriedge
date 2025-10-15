@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');  // ✅ ADD THIS LINE
 const jwt = require('jsonwebtoken');
 const { pool } = require('../config/database');
 
@@ -103,6 +103,8 @@ const loginAdmin = async (req, res) => {
   console.log("1. Login Admin function started");
   const { username, password } = req.body;
   console.log("2. Received:", username, password);
+  console.log("2a. Password length:", password.length);
+  console.log("2b. Password as array:", Array.from(password));
 
   try {
     console.log("3. Starting database query...");
@@ -120,11 +122,22 @@ const loginAdmin = async (req, res) => {
 
     const admin = result.rows[0];
     console.log("4. Query finished, admin found:", admin.username);
+    console.log("4b. Stored hash:", admin.password_hash);
+    console.log("4c. Hash length:", admin.password_hash.length);
 
-    // Check password
+    // Check password with detailed debugging
+    console.log("4d. Starting bcrypt comparison...");
+    console.log("4e. Input password:", `"${password}"`);
+    console.log("4f. Input password length:", password.length);
+    
     const isMatch = await bcrypt.compare(password, admin.password_hash);
+    console.log("4g. Bcrypt compare result:", isMatch);
+    
     if (!isMatch) {
       console.log("4a. Password does not match");
+      // Let's test with a known good comparison
+      const testMatch = await bcrypt.compare('admin123', admin.password_hash);
+      console.log("4h. Test with 'admin123':", testMatch);
       return res.status(400).json({ error: 'Invalid username or password' });
     }
 
@@ -146,7 +159,7 @@ const loginAdmin = async (req, res) => {
     });
   } catch (err) {
     console.log("6. Entered catch block with error:", err);
-    console.error(err);
+    console.error("6a. Full error:", err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
