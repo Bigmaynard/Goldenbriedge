@@ -6,6 +6,9 @@ const { pool } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3006;
+
+app.set('trust proxy', true)
+
 if (process.env.NODE_ENV === 'production') {
   const { Pool } = require('pg');
   // Override the pool with SSL configuration
